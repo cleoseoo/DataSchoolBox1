@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>데이터 표현 네비게이터</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --apple-blue: #0071e3;
+            --apple-blue-grad: linear-gradient(180deg, #0071e3 0%, #00c6ff 100%);
+            --text-dark: #1d1d1f;
+            --footer-bg: #f5f5f7;
+        }
+
+        body { 
+            margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif;
+            background-color: #ffffff; color: var(--text-dark);
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        /* 🔵 상단 메뉴바 (iPad 터치 대응) */
+        header {
+            width: 100%; padding: 45px 0; background: var(--apple-blue-grad);
+            display: flex; justify-content: center; z-index: 1000;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-container { display: flex; gap: 20px; }
+
+        .menu-item {
+            position: relative; background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px); padding: 15px 25px; border-radius: 15px;
+            color: #ffffff; font-weight: 600; font-size: 1.1rem; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* 🟢 드롭다운 소메뉴 */
+        .dropdown {
+            position: absolute; top: 115%; left: 0; width: 160px;
+            background: white; border-radius: 12px; list-style: none;
+            padding: 10px 0; margin: 0; display: none; /* 기본 숨김 */
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        /* 활성화 시(클릭/호버) 표시 */
+        .menu-item.active .dropdown, .menu-item:hover .dropdown { display: block; }
+
+        .dropdown li a {
+            display: block; padding: 15px; color: var(--text-dark);
+            text-decoration: none; font-size: 1rem; text-align: center;
+        }
+        .dropdown li a:hover { background: #f5f5f7; color: var(--apple-blue); font-weight: 700; }
+
+        /* 🟠 중앙 메인 콘텐츠 */
+        main {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center; padding: 60px 20px;
+        }
+
+        .pre-title { font-size: 1.6rem; font-weight: 600; color: var(--apple-blue); margin-bottom: 15px; }
+        .main-title { font-size: 4.8rem; font-weight: 800; letter-spacing: -0.05em; margin: 0; }
+        .main-subtitle { font-size: 1.6rem; color: #86868b; margin-top: 25px; max-width: 800px; line-height: 1.5; }
+
+        /* ⚪ 하단 푸터 (높이 2/3 축소) */
+        footer {
+            width: 100%; padding: 20px 50px; background-color: var(--footer-bg);
+            border-top: 1px solid #d2d2d7; display: flex; justify-content: space-between;
+            font-size: 1rem; color: #86868b; box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="nav-container">
+            <div class="menu-item" onclick="toggleMenu(this)">
+                비트
+                <ul class="dropdown">
+                    <li><a href="비트_개념.html">📖 개념 탐구</a></li>
+                    <li><a href="#">🎮 활용 게임</a></li>
+                </ul>
+            </div>
+            <!-- 소스 기반 나머지 메뉴 구성 [1] -->
+            <div class="menu-item" onclick="toggleMenu(this)">숫자 표현<ul class="dropdown"><li><a href="#">📖 개념 탐구</a></li><li><a href="#">🛠️ 활용 실습</a></li></ul></div>
+            <div class="menu-item" onclick="toggleMenu(this)">문자 표현<ul class="dropdown"><li><a href="#">📖 개념 탐구</a></li><li><a href="#">🛠️ 활용 실습</a></li></ul></div>
+            <div class="menu-item" onclick="toggleMenu(this)">이미지 표현<ul class="dropdown"><li><a href="#">📖 개념 탐구</a></li><li><a href="#">🎨 픽셀 아트</a></li></ul></div>
+            <div class="menu-item" onclick="toggleMenu(this)">소리 표현<ul class="dropdown"><li><a href="#">📖 개념 탐구</a></li><li><a href="#">🔊 파형 체험</a></li></ul></div>
+            <div class="menu-item" onclick="toggleMenu(this)">동영상 표현<ul class="dropdown"><li><a href="#">📖 개념 탐구</a></li><li><a href="#">🎞️ 프레임 실습</a></li></ul></div>
+        </nav>
+    </header>
+
+    <main>
+        <p class="pre-title">🔍 디지털 코드의 비밀을 풀어라!</p>
+        <h1 class="main-title">데이터 표현 네비게이터</h1>
+        <p class="main-subtitle">비트가 데이터로, 데이터가 인공지능으로 나아가는<br>최적의 로드맵 [1, 2]</p>
+    </main>
+
+    <footer>
+        <div style="font-weight: 700; color: #1d1d1f;">데이터 표현 네비게이터</div>
+        <div>중학교 정보 - 데이터의 디지털 표현</div>
+    </footer>
+
+    <script>
+        function toggleMenu(element) {
+            // 다른 메뉴 닫기
+            document.querySelectorAll('.menu-item').forEach(item => {
+                if (item !== element) item.classList.remove('active');
+            });
+            // 현재 메뉴 토글 (iPad 터치 대응)
+            element.classList.toggle('active');
+        }
+        // 바깥 클릭 시 메뉴 닫기
+        window.onclick = function(e) {
+            if (!e.target.closest('.menu-item')) {
+                document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            }
+        }
+    </script>
+</body>
+</html>
