@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>비트 개념 탐구 - 데이터 표현 네비게이터</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --apple-blue: #0071e3;
+            --apple-red: #ff3b30;
+            --bg-light: #f5f5f7;
+        }
+
+        /* 화면 전체를 고정하고 내부만 스크롤되도록 설정 */
+        html, body {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: #ffffff; color: #1d1d1f;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+
+        header { 
+            background: linear-gradient(180deg, #0071e3 0%, #00c6ff 100%); 
+            padding: 15px 20px; flex-shrink: 0; 
+        }
+
+        .back-link { 
+            color: white; text-decoration: none; font-weight: 600; 
+            border: 1px solid rgba(255,255,255,0.5); padding: 8px 18px; border-radius: 50px; 
+            font-size: 0.85rem;
+        }
+
+        /* 중앙 콘텐츠 영역: 동적 확장 및 내부 스크롤 [소스 2 근거] */
+        main {
+            flex: 1; overflow-y: auto;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 20px; box-sizing: border-box;
+        }
+
+        .breadcrumb { color: var(--apple-blue); font-weight: 600; font-size: 1rem; margin-bottom: 8px; }
+        .title { font-size: 2.5rem; font-weight: 800; margin: 0 0 25px 0; letter-spacing: -0.05em; }
+
+        /* 퀘스트 카드 레이아웃 */
+        .quest-card {
+            background: var(--bg-light); padding: 35px; border-radius: 24px;
+            width: 100%; max-width: 800px; box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            box-sizing: border-box;
+        }
+
+        .word-bank { display: flex; gap: 10px; justify-content: center; margin-bottom: 35px; flex-wrap: wrap; }
+        .word {
+            padding: 10px 22px; background: white; border: 2px solid #d2d2d7;
+            border-radius: 12px; cursor: grab; font-weight: 600; font-size: 1.1rem;
+            transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .sentence-area { 
+            font-size: 1.7rem; font-weight: 700; line-height: 1.5; 
+            display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; 
+        }
+
+        .drop-zone {
+            width: 160px; height: 55px; border: 3px dashed var(--apple-blue);
+            border-radius: 14px; display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(0, 113, 227, 0.03); transition: 0.3s;
+        }
+
+        /* 정답 피드백 디자인 [소스 1 근거] */
+        #result-message { margin-top: 25px; min-height: 70px; }
+        .success-text {
+            font-size: 2.2rem; font-weight: 800; color: var(--apple-red);
+            animation: popIn 0.5s cubic-bezier(0.17, 0.89, 0.32, 1.49);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .hundred-icon { font-size: 2.8rem; }
+
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.5); } 100% { opacity: 1; transform: scale(1); } }
+
+        /* 정답 시 나타나는 <다음> 버튼 */
+        #next-slide {
+            position: fixed; bottom: 65px; right: -200px;
+            background: var(--apple-blue); color: white;
+            padding: 12px 35px; border-radius: 50px 0 0 50px;
+            text-decoration: none; font-weight: 700; font-size: 1.3rem;
+            box-shadow: 0 10px 25px rgba(0, 113, 227, 0.3);
+            transition: right 0.5s ease-out;
+            z-index: 2000;
+        }
+        #next-slide.show { right: 0; }
+
+        /* ⚪ 하단 푸터 영역: 한 줄 구성 및 슬림 디자인 */
+        footer { 
+            padding: 12px 40px; background: #f5f5f7; color: #86868b; 
+            border-top: 1px solid #d2d2d7; font-size: 0.85rem; 
+            display: flex; justify-content: space-between; align-items: center;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <header><a href="index.html" class="back-link">← 메인</a></header>
+
+    <main>
+        <p class="breadcrumb">🧭 디지털 여행 시작!</p>
+        <h1 class="title">비트의 개념 완성하기</h1>
+
+        <div class="quest-card">
+            <div class="word-bank">
+                <div class="word" draggable="true" ondragstart="drag(event)" id="w1">가장 큰</div>
+                <div class="word" draggable="true" ondragstart="drag(event)" id="w2">이미지</div>
+                <div class="word" draggable="true" ondragstart="drag(event)" id="w3">가장 작은</div>
+                <div class="word" draggable="true" ondragstart="drag(event)" id="w4">픽셀</div>
+            </div>
+
+            <!-- 소스 2 근거: 비트는 컴퓨터의 가장 작은 정보 단위 -->
+            <div class="sentence-area">
+                비트(Bit)는 컴퓨터의 
+                <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                정보 단위이다.
+            </div>
+
+            <div id="result-message"></div>
+        </div>
+
+        <a href="숫자_개념.html" id="next-slide">다음</a>
+    </main>
+
+    <footer>
+        <span style="font-weight: 600; color: #1d1d1f;">데이터 네비게이터</span>
+        <span>&copy; 중학교 정보</span>
+    </footer>
+
+    <script>
+        function allowDrop(ev) { ev.preventDefault(); }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            var draggedElement = document.getElementById(data);
+            var dropZone = ev.target;
+            var resultMsg = document.getElementById("result-message");
+            var nextSlide = document.getElementById("next-slide");
+
+            if (!dropZone.classList.contains("drop-zone")) return;
+
+            dropZone.innerHTML = draggedElement.innerHTML;
+            dropZone.style.background = "white";
+            dropZone.style.borderStyle = "solid";
+
+            // 소스 2의 정의에 따른 정답 체크: "가장 작은"
+            if (draggedElement.innerHTML === "가장 작은") {
+                resultMsg.innerHTML = `<div class="success-text"><span class="hundred-icon">💯</span> 정답입니다!</div>`;
+                nextSlide.classList.add('show');
+            } else {
+                // 소스 1의 피드백 반영
+                resultMsg.innerHTML = `<div style="font-size:1.6rem; font-weight:700; color:#86868b;">❌ 오답입니다<br><small style='font-size:1rem; font-weight:400;'>다시 생각해보세요!</small></div>`;
+                nextSlide.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>
+  
