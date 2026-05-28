@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>문제의 상태와 구조화 | 중학 정보</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --blue: #007AFF;
+    --blue-light: #E8F1FF;
+    --blue-mid: #4DA3FF;
+    --green: #34C759;
+    --green-light: #E8F9ED;
+    --orange: #FF9500;
+    --orange-light: #FFF4E5;
+    --red: #FF3B30;
+    --red-light: #FFF0EF;
+    --purple: #AF52DE;
+    --purple-light: #F5EAFF;
+    --gray1: #1C1C1E;
+    --gray2: #3A3A3C;
+    --gray3: #6C6C70;
+    --gray4: #AEAEB2;
+    --gray5: #D1D1D6;
+    --gray6: #F2F2F7;
+    --white: #FFFFFF;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.06);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--gray6);
+    color: var(--gray1);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── NAV ── */
+  .top-nav {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 24px;
+  }
+  .nav-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray1);
+    text-decoration: none;
+  }
+  .nav-badge {
+    background: var(--blue);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .nav-tab {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray3);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .nav-tab:hover { background: var(--gray6); color: var(--gray1); }
+  .nav-tab.active { background: var(--blue-light); color: var(--blue); }
+
+  /* ── MAIN LAYOUT ── */
+  .page {
+    display: none;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+    animation: fadeUp 0.35s ease;
+  }
+  .page.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #1C62B9 0%, #007AFF 50%, #5AC8FA 100%);
+    border-radius: var(--radius-xl);
+    padding: 40px 40px 36px;
+    color: white;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; right: 60px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .hero-unit { font-size: 13px; font-weight: 500; opacity: 0.8; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .hero-title { font-size: 32px; font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+  .hero-sub { font-size: 15px; opacity: 0.85; line-height: 1.5; max-width: 480px; }
+  .hero-goals {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .hero-goal {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: var(--radius-md);
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero-goal .num {
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0,0,0,0.05);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray3);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 16px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .section-icon {
+    width: 36px; height: 36px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .section-label { font-size: 20px; font-weight: 700; }
+
+  /* ── STATE DIAGRAM ── */
+  .state-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 20px 0;
+  }
+  .state-box {
+    flex: 1;
+    text-align: center;
+    padding: 20px 16px;
+    border-radius: var(--radius-md);
+    position: relative;
+  }
+  .state-box.initial { background: var(--orange-light); }
+  .state-box.current { background: var(--blue-light); }
+  .state-box.goal { background: var(--green-light); }
+  .state-emoji { font-size: 32px; margin-bottom: 8px; }
+  .state-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .state-desc { font-size: 12px; color: var(--gray3); line-height: 1.4; }
+  .state-arrow {
+    font-size: 22px;
+    color: var(--gray4);
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* ── CONCEPT CARDS GRID ── */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .concept-card {
+    background: var(--gray6);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .concept-card:hover { border-color: var(--blue); background: var(--blue-light); }
+  .concept-label { font-size: 12px; font-weight: 600; color: var(--gray3); margin-bottom: 6px; }
+  .concept-value { font-size: 16px; font-weight: 700; color: var(--gray1); line-height: 1.4; }
+  .concept-sub { font-size: 13px; color: var(--gray3); margin-top: 4px; }
+
+  /* ── QUIZ ── */
+  .quiz-block {
+    background: var(--gray6);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-top: 16px;
+  }
+  .quiz-q { font-size: 15px; font-weight: 600; margin-bottom: 16px; line-height: 1.5; }
+  .quiz-choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .choice-btn {
+    background: white;
+    border: 1.5px solid var(--gray5);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.18s;
+    color: var(--gray1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .choice-btn:hover { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+  .choice-btn.correct { background: var(--green-light); border-color: var(--green); color: #1a7a35; }
+  .choice-btn.wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
+  .choice-btn.disabled { pointer-events: none; opacity: 0.5; }
+  .choice-label {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--gray5);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .quiz-feedback {
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    display: none;
+    line-height: 1.5;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: var(--green-light); color: #1a7a35; border: 1px solid #b7ebc7; }
+  .quiz-feedback.ng { background: var(--red-light); color: #cc2a22; border: 1px solid #ffc8c5; }
+
+  /* ── DRAG & DROP ── */
+  .drag-area {
+    min-height: 80px;
+    background: white;
+    border: 2px dashed var(--gray5);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    transition: all 0.18s;
+  }
+  .drag-area.over { border-color: var(--blue); background: var(--blue-light); }
+  .drag-area.correct-area { border-color: var(--green); background: var(--green-light); }
+  .drag-placeholder { color: var(--gray4); font-size: 13px; padding: 4px; }
+  .drag-chip {
+    background: var(--blue);
+    color: white;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: grab;
+    user-select: none;
+    transition: all 0.15s;
+    box-shadow: var(--shadow-sm);
+  }
+  .drag-chip:active { cursor: grabbing; transform: scale(1.05); }
+  .drag-chip.bank { background: var(--gray2); }
+  .drag-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  /* ── RIVER CROSSING ── */
+  .river-scene {
+    background: #E8F4FD;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin: 16px 0;
+    border: 1px solid #B8DCEF;
+  }
+  .river-banks {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+  }
+  .bank-side {
+    flex: 1;
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  .bank-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  .river-middle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 8px;
+  }
+  .river-label { font-size: 12px; font-weight: 600; color: #1a7aaf; writing-mode: vertical-rl; }
+  .river-divider {
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, #5AC8FA, #007AFF);
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+  .entity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--gray6);
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.18s;
+    user-select: none;
+  }
+  .entity:hover { border-color: var(--blue); background: var(--blue-light); }
+  .entity.selected { border-color: var(--blue); background: var(--blue-light); }
+  .entity.danger { border-color: var(--red); background: var(--red-light); }
+  .entity-icon { font-size: 20px; }
+  .entity-name { flex: 1; }
+  .entity-state { font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+  .entity-state.here { background: #D1F5DC; color: #1a7a35; }
+  .entity-state.there { background: var(--blue-light); color: var(--blue); }
+
+  .boat-area {
+    background: #FFF4E5;
+    border: 2px solid #FFD090;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    text-align: center;
+    margin: 12px 0;
+  }
+  .boat-label { font-size: 12px; font-weight: 700; color: #885500; margin-bottom: 8px; }
+  .boat-slots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+  .boat-slot {
+    width: 80px; height: 60px;
+    border: 2px dashed #FFD090;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    background: white;
+  }
+  .boat-slot.filled { border-style: solid; border-color: var(--orange); background: var(--orange-light); }
+
+  .action-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .action-btn {
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 10px 20px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .action-btn:hover { background: #0066DD; transform: translateY(-1px); }
+  .action-btn:active { transform: translateY(0); }
+  .action-btn.secondary { background: var(--gray6); color: var(--gray1); border: 1px solid var(--gray5); }
+  .action-btn.secondary:hover { background: var(--gray5); }
+  .action-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ── STATE TABLE ── */
+  .state-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+  .state-table th {
+    background: var(--gray6);
+    padding: 10px 14px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--gray3);
+    border-bottom: 1px solid var(--gray5);
+  }
+  .state-table th:first-child { border-radius: var(--radius-sm) 0 0 0; text-align: left; }
+  .state-table th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+  .state-table td {
+    padding: 10px 14px;
+    text-align: center;
+    border-bottom: 1px solid var(--gray6);
+    font-weight: 500;
+  }
+  .state-table td:first-child { text-align: left; }
+  .state-table tr:last-child td { border-bottom: none; }
+  .state-table tr:hover td { background: var(--blue-light); }
+  .cell-0 { color: var(--gray3); }
+  .cell-1 { color: var(--blue); font-weight: 700; }
+  .cell-highlight td { background: #FFF4E5 !important; }
+  .state-step { display: inline-flex; align-items: center; gap: 4px; }
+  .step-badge {
+    background: var(--blue);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+  .step-badge.initial-badge { background: var(--orange); }
+  .step-badge.goal-badge { background: var(--green); }
+
+  /* ── LOG ── */
+  .log-box {
+    background: var(--gray6);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    font-size: 13px;
+    min-height: 40px;
+    max-height: 140px;
+    overflow-y: auto;
+    line-height: 1.7;
+  }
+  .log-entry { color: var(--gray2); }
+  .log-entry.warn { color: var(--red); font-weight: 600; }
+  .log-entry.ok { color: var(--green); font-weight: 600; }
+
+  /* ── NOTES ── */
+  .notes-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .notes-title { font-size: 18px; font-weight: 700; }
+  .save-png-btn {
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.18s;
+  }
+  .save-png-btn:hover { background: #0066DD; }
+  .save-png-btn svg { width: 16px; height: 16px; fill: white; }
+
+  .notes-area {
+    width: 100%;
+    min-height: 160px;
+    background: var(--gray6);
+    border: 1.5px solid var(--gray5);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--gray1);
+    resize: vertical;
+    transition: border-color 0.18s;
+    margin-bottom: 12px;
+  }
+  .notes-area:focus {
+    outline: none;
+    border-color: var(--blue);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(0,122,255,0.12);
+  }
+  .notes-area::placeholder { color: var(--gray4); }
+
+  .reflection-card {
+    background: var(--purple-light);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    border: 1px solid rgba(175,82,222,0.15);
+  }
+  .reflection-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--purple);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .reflection-subtitle { font-size: 13px; color: var(--gray3); margin-bottom: 14px; }
+  .reflection-textarea {
+    width: 100%;
+    min-height: 120px;
+    background: white;
+    border: 1.5px solid rgba(175,82,222,0.3);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--gray1);
+    resize: vertical;
+    transition: border-color 0.18s;
+  }
+  .reflection-textarea:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(175,82,222,0.12); }
+  .reflection-textarea::placeholder { color: var(--gray4); }
+
+  .student-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .info-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .info-label { font-size: 11px; font-weight: 600; color: var(--gray3); text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-input {
+    border: 1.5px solid var(--gray5);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--gray1);
+    background: white;
+    transition: border-color 0.18s;
+  }
+  .info-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,122,255,0.12); }
+
+  /* ── PROGRESS ── */
+  .progress-bar-wrap {
+    background: var(--gray5);
+    border-radius: 20px;
+    height: 6px;
+    margin: 8px 0 20px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--blue-mid));
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── SNAPSHOT AREA ── */
+  #snapshot-target {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 32px;
+    border: 1px solid var(--gray5);
+  }
+  .snapshot-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--gray5);
+  }
+  .snapshot-logo {
+    width: 44px; height: 44px;
+    background: var(--blue);
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .snapshot-meta { flex: 1; }
+  .snapshot-meta-title { font-size: 16px; font-weight: 700; }
+  .snapshot-meta-sub { font-size: 13px; color: var(--gray3); margin-top: 2px; }
+  .snapshot-date { font-size: 12px; color: var(--gray4); }
+
+  .notes-preview {
+    background: var(--gray6);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    min-height: 60px;
+    color: var(--gray2);
+    margin-bottom: 12px;
+  }
+  .notes-preview:empty::before { content: '(내용 없음)'; color: var(--gray4); }
+  .reflection-preview {
+    background: var(--purple-light);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    min-height: 60px;
+    color: var(--gray2);
+  }
+  .reflection-preview:empty::before { content: '(내용 없음)'; color: var(--gray4); }
+
+  .preview-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray3);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+
+  /* ── SUCCESS BANNER ── */
+  .success-banner {
+    background: linear-gradient(135deg, #1a7a35, var(--green));
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    color: white;
+    display: none;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .success-banner.show { display: flex; }
+  .success-icon { font-size: 36px; }
+  .success-text { font-size: 16px; font-weight: 700; }
+  .success-sub { font-size: 13px; opacity: 0.85; margin-top: 2px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--gray1);
+    color: white;
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 9999;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── MISC ── */
+  .section-divider { height: 1px; background: var(--gray5); margin: 24px 0; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .text-blue { color: var(--blue); }
+  .text-green { color: var(--green); }
+  .text-orange { color: var(--orange); }
+  .text-muted { color: var(--gray3); }
+  .font-bold { font-weight: 700; }
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+
+  @media (max-width: 640px) {
+    .quiz-choices { grid-template-columns: 1fr; }
+    .state-flow { flex-direction: column; }
+    .state-arrow { transform: rotate(90deg); }
+    .concept-grid { grid-template-columns: 1fr; }
+    .student-info { grid-template-columns: 1fr; }
+    .river-banks { flex-direction: column; }
+    .hero-title { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="nav-badge">정보</span>
+      문제의 상태와 구조화
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('learn')">📖 학습</button>
+      <button class="nav-tab" onclick="showPage('activity')">🧩 활동</button>
+      <button class="nav-tab" onclick="showPage('notes')">📝 노트</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ PAGE 1: 학습 ══════════ -->
+<div id="page-learn" class="page active">
+
+  <div class="hero">
+    <div class="hero-unit">Ⅲ 알고리즘과 프로그래밍 · 01단원</div>
+    <div class="hero-title">문제의 상태와 구조화</div>
+    <div class="hero-sub">문제를 해결하려면 먼저 문제의 시작, 과정, 결과를 정확히 정의해야 해요.</div>
+    <div class="hero-goals">
+      <div class="hero-goal"><span class="num">1</span> 초기·현재·목표 상태를 정의할 수 있다</div>
+      <div class="hero-goal"><span class="num">2</span> 문제 상태를 수행 가능한 형태로 구조화할 수 있다</div>
+    </div>
+  </div>
+
+  <!-- 생각 나누기 -->
+  <div class="card">
+    <div class="card-title">💬 생각 나누기</div>
+    <p style="font-size:15px; line-height:1.7; color:var(--gray2);">
+      햄버거를 만들 때 방법과 절차에 따라 다양한 결과가 나옵니다.<br>
+      우리 일상에서도 <strong>방법과 절차에 따라 결과가 달라지는 사례</strong>는 무엇이 있을까요?
+    </p>
+    <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+      <div style="background:var(--orange-light); border-radius:var(--radius-sm); padding:10px 14px; font-size:13px; flex:1; min-width:140px;">
+        🍜 라면 — 면을 얼마나 끓이느냐에 따라 식감이 달라진다
+      </div>
+      <div style="background:var(--blue-light); border-radius:var(--radius-sm); padding:10px 14px; font-size:13px; flex:1; min-width:140px;">
+        📚 독서 — 꼼꼼히 vs 속독, 방법에 따라 얻는 것이 달라진다
+      </div>
+    </div>
+  </div>
+
+  <!-- 문제와 문제 해결 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--orange-light);">🎯</div>
+      <div class="section-label">1. 문제와 문제 해결 과정</div>
+    </div>
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="concept-label">문제 (Problem)</div>
+        <div class="concept-value">해결하려는 작업이나 과제</div>
+        <div class="concept-sub">내가 해결해야 할 대상</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-label">문제 해결 과정</div>
+        <div class="concept-value">분석 → 방법 탐색 → 수행 → 목표 달성</div>
+        <div class="concept-sub">체계적인 일련의 과정</div>
+      </div>
+    </div>
+
+    <!-- Quiz 1 -->
+    <div class="quiz-block">
+      <div class="quiz-q">❓ 문제 해결 과정에서 가장 먼저 해야 할 것은?</div>
+      <div class="quiz-choices">
+        <button class="choice-btn" onclick="answerQuiz(this, 'q1', false)">
+          <span class="choice-label">A</span> 바로 해결 방법 실행하기
+        </button>
+        <button class="choice-btn" onclick="answerQuiz(this, 'q1', true)">
+          <span class="choice-label">B</span> 문제를 정확히 이해하고 분석하기
+        </button>
+        <button class="choice-btn" onclick="answerQuiz(this, 'q1', false)">
+          <span class="choice-label">C</span> 결과를 먼저 예측하기
+        </button>
+        <button class="choice-btn" onclick="answerQuiz(this, 'q1', false)">
+          <span class="choice-label">D</span> 친구에게 물어보기
+        </button>
+      </div>
+      <div id="fb-q1" class="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- 문제의 3가지 상태 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--blue-light);">🗺️</div>
+      <div class="section-label">2. 문제의 3가지 상태</div>
+    </div>
+    <p style="font-size:14px; color:var(--gray3); margin-bottom:20px;">
+      문제를 해결하려면 초기 상태 → 현재 상태 → 목표 상태를 파악하고 정의해야 합니다.
+    </p>
+
+    <div class="state-flow">
+      <div class="state-box initial">
+        <div class="state-emoji">🚀</div>
+        <div class="state-name" style="color:var(--orange);">초기 상태</div>
+        <div class="state-desc">문제의<br>시작 상태</div>
+      </div>
+      <div class="state-arrow">→</div>
+      <div class="state-box current">
+        <div class="state-emoji">🏃</div>
+        <div class="state-name" style="color:var(--blue);">현재 상태</div>
+        <div class="state-desc">초기에서 목표로<br>가는 특정 단계</div>
+      </div>
+      <div class="state-arrow">→</div>
+      <div class="state-box goal">
+        <div class="state-emoji">🏁</div>
+        <div class="state-name" style="color:var(--green);">목표 상태</div>
+        <div class="state-desc">문제가 해결된<br>최종 상태</div>
+      </div>
+    </div>
+
+    <!-- Quiz 2 -->
+    <div class="quiz-block">
+      <div class="quiz-q">❓ "문제가 해결되었을 때의 최종 상태"를 무엇이라고 할까요?</div>
+      <div class="quiz-choices">
+        <button class="choice-btn" onclick="answerQuiz(this, 'q2', false)">
+          <span class="choice-label">A</span> 초기 상태
+        </button>
+        <button class="choice-btn" onclick="answerQuiz(this, 'q2', false)">
+          <span class="choice-label">B</span> 현재 상태
+        </button>
+        <button class="choice-btn" onclick="answerQuiz(this, 'q2', true)">
+          <span class="choice-label">C</span> 목표 상태
+        </button>
+        <button class="choice-btn" onclick="answerQuiz(this, 'q2', false)">
+          <span class="choice-label">D</span> 중간 상태
+        </button>
+      </div>
+      <div id="fb-q2" class="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- 문제 상태의 구조화 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--green-light);">🧩</div>
+      <div class="section-label">3. 문제 상태의 구조화</div>
+    </div>
+    <p style="font-size:14px; color:var(--gray2); line-height:1.7; margin-bottom:16px;">
+      문제의 3가지 상태를 정의한 후에는 <strong>수행 가능한 형태로 구조화</strong>해야 합니다.<br>
+      구조화하면 초기 상태에서 목표 상태까지의 작업을 명확하게 파악할 수 있어요.
+    </p>
+
+    <div style="background:var(--green-light); border-radius:var(--radius-md); padding:18px; border:1px solid rgba(52,199,89,0.2);">
+      <div style="font-size:13px; font-weight:700; color:#1a7a35; margin-bottom:10px;">🎡 예시: 놀이공원 놀이기구 모두 타기</div>
+      <div style="font-size:13px; color:var(--gray2); line-height:1.7;">
+        0 = 아직 안 탔음 &nbsp;|&nbsp; 1 = 탔음<br>
+        <strong>초기 상태:</strong> 관람차(0), 바이킹(0), 범퍼카(0) → <span class="pill">000</span><br>
+        <strong>목표 상태:</strong> 관람차(1), 바이킹(1), 범퍼카(1) → <span class="pill" style="background:var(--green-light); color:var(--green);">111</span>
+      </div>
+    </div>
+
+    <!-- Quiz 3 -->
+    <div class="quiz-block mt-16">
+      <div class="quiz-q">❓ 놀이공원에서 관람차와 바이킹을 탔고 범퍼카는 아직 안 탔어요. 현재 상태를 구조화하면?</div>
+      <div class="quiz-choices">
+        <button class="choice-btn" onclick="answerQuiz(this, 'q3', false)">
+          <span class="choice-label">A</span> 011
+        </button>
+        <button class="choice-btn" onclick="answerQuiz(this, 'q3', true)">
+          <span class="choice-label">B</span> 110
+        </button>
+        <button class="choice-btn" onclick="answerQuiz(this, 'q3', false)">
+          <span class="choice-label">C</span> 101
+        </button>
+        <button class="choice-btn" onclick="answerQuiz(this, 'q3', false)">
+          <span class="choice-label">D</span> 111
+        </button>
+      </div>
+      <div id="fb-q3" class="quiz-feedback"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ PAGE 2: 활동 ══════════ -->
+<div id="page-activity" class="page">
+
+  <div class="card">
+    <div class="card-title">🧩 탐구 활동 — 강 건너기 문제</div>
+    <p style="font-size:15px; line-height:1.7; color:var(--gray2);">
+      농부가 <strong>늑대, 염소, 양배추</strong>를 배에 싣고 강을 건너야 합니다.<br>
+      배에는 농부 외에 한 가지만 더 실을 수 있어요.
+    </p>
+    <div style="background:var(--red-light); border-radius:var(--radius-md); padding:14px 16px; margin-top:14px; border:1px solid rgba(255,59,48,0.15);">
+      <div style="font-size:13px; font-weight:700; color:var(--red); margin-bottom:6px;">⚠️ 주의 조건</div>
+      <div style="font-size:13px; color:var(--gray2); line-height:1.7;">
+        • 늑대 + 염소만 남겨두면 → 늑대가 염소를 잡아먹어요!<br>
+        • 염소 + 양배추만 남겨두면 → 염소가 양배추를 먹어요!
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1: 조건 드래그 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--orange-light); font-size:16px; font-weight:700; color:var(--orange);">1</div>
+      <div class="section-label">조건 정리하기 — 드래그로 배치해보세요</div>
+    </div>
+    <p style="font-size:13px; color:var(--gray3); margin-bottom:16px;">아래 조건 카드를 알맞은 자리에 끌어다 놓으세요.</p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div>
+        <div style="font-size:12px; font-weight:700; color:var(--gray3); margin-bottom:8px;">이동 조건</div>
+        <div id="drop1" class="drag-area" ondragover="dragOver(event)" ondrop="drop(event,'drop1')" ondragleave="dragLeave(event)">
+          <span class="drag-placeholder">여기에 드래그하세요</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px; font-weight:700; color:var(--gray3); margin-bottom:8px;">금지 조건</div>
+        <div id="drop2" class="drag-area" ondragover="dragOver(event)" ondrop="drop(event,'drop2')" ondragleave="dragLeave(event)">
+          <span class="drag-placeholder">여기에 드래그하세요</span>
+        </div>
+      </div>
+    </div>
+    <div class="drag-bank" id="chip-bank">
+      <div class="drag-chip bank" draggable="true" id="chip1" ondragstart="dragStart(event,'chip1')">🐑 염소와 양배추만 ❌</div>
+      <div class="drag-chip bank" draggable="true" id="chip2" ondragstart="dragStart(event,'chip2')">🐺 늑대와 염소만 ❌</div>
+      <div class="drag-chip bank" draggable="true" id="chip3" ondragstart="dragStart(event,'chip3')">🚣 농부 없이 이동 ❌</div>
+      <div class="drag-chip bank" draggable="true" id="chip4" ondragstart="dragStart(event,'chip4')">⛵ 한 번에 1개만 탑승</div>
+    </div>
+    <button class="action-btn secondary" style="margin-top:12px; font-size:13px;" onclick="checkDragAnswers()">✅ 정답 확인</button>
+    <div id="drag-result" style="margin-top:10px; font-size:13px; display:none;"></div>
+  </div>
+
+  <!-- Step 2: 상태 구조화 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--blue-light); font-size:16px; font-weight:700; color:var(--blue);">2</div>
+      <div class="section-label">상태 구조화 — 0과 1로 표현하기</div>
+    </div>
+    <p style="font-size:13px; color:var(--gray3); margin-bottom:16px;">
+      강을 건너기 전 출발 위치 = <strong>0</strong> / 강을 건넌 후 도착 위치 = <strong>1</strong>
+    </p>
+
+    <table class="state-table">
+      <thead>
+        <tr>
+          <th>상태 단계</th>
+          <th>🧑‍🌾 농부</th>
+          <th>🐺 늑대</th>
+          <th>🐑 염소</th>
+          <th>🥬 양배추</th>
+          <th>안전 여부</th>
+        </tr>
+      </thead>
+      <tbody id="state-tbody">
+        <tr>
+          <td><span class="state-step"><span class="step-badge initial-badge">초기</span></span></td>
+          <td class="cell-0">0</td><td class="cell-0">0</td><td class="cell-0">0</td><td class="cell-0">0</td>
+          <td><span style="color:var(--green); font-weight:700;">✓ 안전</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; align-items:center;">
+      <button class="action-btn" onclick="addStateRow()">+ 단계 추가</button>
+      <button class="action-btn secondary" onclick="addGoalRow()">🏁 목표 상태 추가</button>
+      <button class="action-btn secondary" onclick="clearRows()">초기화</button>
+    </div>
+  </div>
+
+  <!-- Step 3: 강 건너기 시뮬레이션 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--purple-light); font-size:16px; font-weight:700; color:var(--purple);">3</div>
+      <div class="section-label">강 건너기 시뮬레이션</div>
+    </div>
+    <p style="font-size:13px; color:var(--gray3); margin-bottom:16px;">캐릭터를 클릭해서 배에 태우고 <strong>강 건너기</strong> 버튼을 누르세요!</p>
+
+    <div class="river-scene">
+      <!-- 출발 쪽 -->
+      <div style="font-size:12px; font-weight:700; color:var(--gray3); margin-bottom:8px;">🏠 출발 (이쪽 강변)</div>
+      <div id="left-bank" style="display:flex; flex-wrap:wrap; gap:8px; min-height:56px; background:white; border-radius:var(--radius-md); padding:10px; margin-bottom:12px; border:1px solid var(--gray5);"></div>
+
+      <!-- 배 -->
+      <div class="boat-area">
+        <div class="boat-label">⛵ 배 (농부 + 최대 1개)</div>
+        <div class="boat-slots">
+          <div class="boat-slot" id="boat-farmer"><span style="font-size:24px;">🧑‍🌾</span></div>
+          <div class="boat-slot" id="boat-cargo" style="cursor:pointer; border-style:dashed;" onclick="removeFromBoat()">
+            <span id="boat-cargo-inner" style="font-size:24px;">➕</span>
+          </div>
+        </div>
+        <div id="boat-direction" style="font-size:13px; font-weight:600; color:var(--orange); margin-top:8px;">→ 강 건너기 방향</div>
+      </div>
+
+      <!-- 도착 쪽 -->
+      <div style="font-size:12px; font-weight:700; color:var(--gray3); margin-bottom:8px;">🏁 도착 (저쪽 강변)</div>
+      <div id="right-bank" style="display:flex; flex-wrap:wrap; gap:8px; min-height:56px; background:white; border-radius:var(--radius-md); padding:10px; margin-bottom:12px; border:1px solid var(--gray5);"></div>
+
+      <div class="action-row">
+        <button class="action-btn" onclick="crossRiver()" id="cross-btn">🚣 강 건너기</button>
+        <button class="action-btn secondary" onclick="resetRiver()">🔄 처음부터</button>
+      </div>
+    </div>
+
+    <div class="log-box mt-8" id="river-log">
+      <div class="log-entry">시뮬레이션을 시작하세요. 캐릭터를 클릭해 배에 태우세요!</div>
+    </div>
+
+    <div class="success-banner" id="success-banner">
+      <div class="success-icon">🎉</div>
+      <div>
+        <div class="success-text">모두 안전하게 강을 건넜어요!</div>
+        <div class="success-sub">문제의 목표 상태에 도달했습니다. 훌륭해요!</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ PAGE 3: 배움 노트 ══════════ -->
+<div id="page-notes" class="page">
+
+  <div id="snapshot-target">
+    <div class="snapshot-header">
+      <div class="snapshot-logo">📝</div>
+      <div class="snapshot-meta">
+        <div class="snapshot-meta-title">배움 노트 — 문제의 상태와 구조화</div>
+        <div class="snapshot-meta-sub">중학 정보 · Ⅲ 알고리즘과 프로그래밍 · 01단원</div>
+      </div>
+      <div class="snapshot-date" id="today-date"></div>
+    </div>
+
+    <div class="student-info">
+      <div class="info-field">
+        <div class="info-label">학년 · 반</div>
+        <input class="info-input" type="text" id="input-class" placeholder="예: 1학년 2반">
+      </div>
+      <div class="info-field">
+        <div class="info-label">번호</div>
+        <input class="info-input" type="text" id="input-num" placeholder="예: 15번">
+      </div>
+      <div class="info-field">
+        <div class="info-label">이름</div>
+        <input class="info-input" type="text" id="input-name" placeholder="홍길동">
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="notes-header">
+      <div class="notes-title">📖 오늘 배운 내용</div>
+    </div>
+    <textarea class="notes-area" id="notes-input" placeholder="오늘 수업에서 배운 내용을 자유롭게 정리해보세요.&#10;&#10;예)&#10;• 문제의 3가지 상태: 초기 상태, 현재 상태, 목표 상태&#10;• 구조화란 문제 상태를 수행 가능한 형태로 나타내는 것&#10;• 0과 1로 상태를 표현할 수 있다"></textarea>
+
+    <div class="section-divider"></div>
+
+    <div class="reflection-card">
+      <div class="reflection-title">💭 수업 소감문</div>
+      <div class="reflection-subtitle">오늘 수업에서 느낀 점, 어려웠던 점, 궁금한 점을 적어보세요.</div>
+      <textarea class="reflection-textarea" id="reflection-input" placeholder="오늘 수업에서 느낀 점을 자유롭게 적어주세요.&#10;&#10;예) 오늘 강 건너기 문제를 풀어보니 0과 1로 상태를 표현하면 훨씬 명확하게 문제를 볼 수 있었다. 처음에는 어려웠지만..."></textarea>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div style="background:var(--blue-light); border-radius:var(--radius-md); padding:14px 18px;">
+      <div style="font-size:13px; font-weight:700; color:var(--blue); margin-bottom:6px;">📌 핵심 정리</div>
+      <div style="font-size:13px; color:var(--gray2); line-height:1.8;">
+        ① <strong>초기 상태</strong> → 문제의 시작 상태<br>
+        ② <strong>현재 상태</strong> → 초기에서 목표로 가는 중간 단계<br>
+        ③ <strong>목표 상태</strong> → 문제가 해결된 최종 상태<br>
+        ④ <strong>구조화</strong> → 상태를 0/1 같은 수행 가능한 형태로 표현
+      </div>
+    </div>
+
+  </div><!-- #snapshot-target -->
+
+  <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+    <button class="save-png-btn" onclick="savePNG()">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 16l-4-4h2.5V4h3v8H16l-4 4zm-7 2h14v2H5v-2z"/></svg>
+      PNG로 저장하기
+    </button>
+    <button class="action-btn secondary" onclick="clearNotes()">🗑 내용 지우기</button>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── TODAY DATE ──
+  const d = new Date();
+  document.getElementById('today-date').textContent =
+    `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+
+  // ── PAGE SWITCH ──
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    const tabs = ['learn','activity','notes'];
+    document.querySelectorAll('.nav-tab')[tabs.indexOf(name)].classList.add('active');
+  }
+
+  // ── QUIZ ──
+  function answerQuiz(btn, qid, correct) {
+    const block = btn.closest('.quiz-block');
+    block.querySelectorAll('.choice-btn').forEach(b => {
+      b.classList.add('disabled');
+    });
+    const fb = document.getElementById('fb-' + qid);
+    if (correct) {
+      btn.classList.add('correct');
+      fb.className = 'quiz-feedback show ok';
+      fb.innerHTML = '✨ 정답이에요! 아주 잘했어요.';
+    } else {
+      btn.classList.add('wrong');
+      fb.className = 'quiz-feedback show ng';
+      fb.innerHTML = '🤔 아쉬워요! 다시 생각해볼까요? 정답을 찾아보세요.';
+      block.querySelectorAll('.choice-btn').forEach(b => {
+        if (b.getAttribute('onclick').includes('true')) b.classList.add('correct');
+      });
+    }
+  }
+
+  // ── DRAG & DROP (조건 정리) ──
+  let draggingId = null;
+  const chipAnswers = {
+    drop1: ['chip3','chip4'],
+    drop2: ['chip1','chip2']
+  };
+  function dragStart(e, id) {
+    draggingId = id;
+    e.dataTransfer.effectAllowed = 'move';
+  }
+  function dragOver(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('over');
+  }
+  function dragLeave(e) {
+    e.currentTarget.classList.remove('over');
+  }
+  function drop(e, targetId) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('over');
+    if (!draggingId) return;
+    const chip = document.getElementById(draggingId);
+    const placeholder = e.currentTarget.querySelector('.drag-placeholder');
+    if (placeholder) placeholder.remove();
+    e.currentTarget.appendChild(chip);
+    chip.classList.remove('bank');
+    draggingId = null;
+  }
+  function checkDragAnswers() {
+    let correct = 0;
+    ['drop1','drop2'].forEach(zoneId => {
+      const zone = document.getElementById(zoneId);
+      const chips = zone.querySelectorAll('.drag-chip');
+      chips.forEach(c => {
+        if (chipAnswers[zoneId].includes(c.id)) correct++;
+      });
+    });
+    const res = document.getElementById('drag-result');
+    res.style.display = 'block';
+    if (correct >= 3) {
+      res.style.color = 'var(--green)';
+      res.style.fontWeight = '700';
+      res.textContent = '✨ 정답! 조건을 잘 분류했어요!';
+    } else {
+      res.style.color = 'var(--red)';
+      res.style.fontWeight = '600';
+      res.textContent = `🤔 ${correct}개 맞았어요. 이동 조건과 금지 조건을 다시 생각해보세요.`;
+    }
+  }
+
+  // ── STATE TABLE ──
+  let stateRows = [];
+  function addStateRow() {
+    const tbody = document.getElementById('state-tbody');
+    const row = document.createElement('tr');
+    const step = stateRows.length + 1;
+    row.innerHTML = `
+      <td><span class="state-step"><span class="step-badge">단계 ${step}</span></span></td>
+      <td><input type="number" min="0" max="1" value="0" style="width:40px; text-align:center; border:1px solid var(--gray5); border-radius:4px; padding:3px;"></td>
+      <td><input type="number" min="0" max="1" value="0" style="width:40px; text-align:center; border:1px solid var(--gray5); border-radius:4px; padding:3px;"></td>
+      <td><input type="number" min="0" max="1" value="0" style="width:40px; text-align:center; border:1px solid var(--gray5); border-radius:4px; padding:3px;"></td>
+      <td><input type="number" min="0" max="1" value="0" style="width:40px; text-align:center; border:1px solid var(--gray5); border-radius:4px; padding:3px;"></td>
+      <td><input type="text" placeholder="안전/위험" style="width:70px; border:1px solid var(--gray5); border-radius:4px; padding:3px; font-size:12px;"></td>
+    `;
+    tbody.appendChild(row);
+    stateRows.push(row);
+  }
+  function addGoalRow() {
+    const tbody = document.getElementById('state-tbody');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><span class="state-step"><span class="step-badge goal-badge">목표</span></span></td>
+      <td class="cell-1">1</td><td class="cell-1">1</td><td class="cell-1">1</td><td class="cell-1">1</td>
+      <td><span style="color:var(--green); font-weight:700;">✓ 안전</span></td>
+    `;
+    tbody.appendChild(row);
+  }
+  function clearRows() {
+    const tbody = document.getElementById('state-tbody');
+    while (tbody.rows.length > 1) tbody.deleteRow(1);
+    stateRows = [];
+  }
+
+  // ── RIVER SIMULATION ──
+  const entities = [
+    { id:'wolf', name:'늑대', icon:'🐺', side:'left', onBoat:false },
+    { id:'goat', name:'염소', icon:'🐑', side:'left', onBoat:false },
+    { id:'cab',  name:'양배추', icon:'🥬', side:'left', onBoat:false },
+  ];
+  let boatSide = 'left';
+  let boatCargo = null;
+  let crossCount = 0;
+
+  function renderRiver() {
+    const left = document.getElementById('left-bank');
+    const right = document.getElementById('right-bank');
+    left.innerHTML = '';
+    right.innerHTML = '';
+
+    entities.forEach(e => {
+      if (e.onBoat) return;
+      const el = document.createElement('div');
+      el.className = 'entity';
+      el.id = 'entity-' + e.id;
+      el.innerHTML = `<span class="entity-icon">${e.icon}</span><span class="entity-name">${e.name}</span>`;
+
+      const isDanger = checkDanger(e);
+      if (isDanger) el.classList.add('danger');
+
+      if (e.side === boatSide) {
+        el.onclick = () => loadBoat(e.id);
+        left.appendChild(el);
+      } else {
+        right.appendChild(el);
+      }
+    });
+
+    // Boat cargo display
+    const cargoInner = document.getElementById('boat-cargo-inner');
+    if (boatCargo) {
+      const ent = entities.find(e => e.id === boatCargo);
+      cargoInner.textContent = ent.icon;
+      document.getElementById('boat-cargo').classList.add('filled');
+    } else {
+      cargoInner.textContent = '➕';
+      document.getElementById('boat-cargo').classList.remove('filled');
+    }
+
+    document.getElementById('boat-direction').textContent =
+      boatSide === 'left' ? '→ 이쪽에서 저쪽으로' : '← 저쪽에서 이쪽으로';
+
+    checkWin();
+  }
+
+  function checkDanger(e) {
+    const sameSide = entities.filter(x => !x.onBoat && x.side === e.side && x.id !== e.id).map(x => x.id);
+    if (e.id === 'wolf' && sameSide.includes('goat') && !entities.find(x=>x.id==='wolf').onBoat) {
+      const farmerOnSide = boatSide !== e.side;
+      return farmerOnSide;
+    }
+    return false;
+  }
+
+  function loadBoat(id) {
+    if (boatCargo) { showToast('배에 이미 한 가지가 실려 있어요!'); return; }
+    boatCargo = id;
+    const e = entities.find(x => x.id === id);
+    e.onBoat = true;
+    addLog(`${e.icon} ${e.name}을(를) 배에 태웠어요.`);
+    renderRiver();
+  }
+
+  function removeFromBoat() {
+    if (!boatCargo) return;
+    const e = entities.find(x => x.id === boatCargo);
+    e.onBoat = false;
+    addLog(`${e.icon} ${e.name}을(를) 배에서 내렸어요.`);
+    boatCargo = null;
+    renderRiver();
+  }
+
+  function crossRiver() {
+    const arrived = entities.filter(e => !e.onBoat && e.side !== boatSide);
+    const left_alone = entities.filter(e => !e.onBoat && e.side === boatSide);
+    const danger = checkDangerGroup(left_alone.map(e=>e.id));
+    if (danger) {
+      addLog('⚠️ ' + danger, 'warn');
+      showToast('⚠️ ' + danger);
+      return;
+    }
+
+    crossCount++;
+    const prevSide = boatSide;
+    boatSide = boatSide === 'left' ? 'right' : 'left';
+
+    if (boatCargo) {
+      const e = entities.find(x => x.id === boatCargo);
+      e.side = boatSide;
+      e.onBoat = false;
+      addLog(`${e.icon} ${e.name}과(와) 함께 강을 건넜어요! (${crossCount}번째)`, 'ok');
+      boatCargo = null;
+    } else {
+      addLog(`🧑‍🌾 농부 혼자 강을 건넜어요. (${crossCount}번째)`, 'ok');
+    }
+    renderRiver();
+  }
+
+  function checkDangerGroup(ids) {
+    if (ids.includes('wolf') && ids.includes('goat') && !ids.includes('cab')) return null;
+    if (ids.includes('wolf') && ids.includes('goat')) return '늑대와 염소만 남겨두면 늑대가 염소를 잡아먹어요!';
+    if (ids.includes('goat') && ids.includes('cab')) return '염소와 양배추만 남겨두면 염소가 양배추를 먹어요!';
+    return null;
+  }
+
+  function checkWin() {
+    const allRight = entities.every(e => e.side === 'right' && !e.onBoat) && boatSide === 'right';
+    if (allRight) {
+      document.getElementById('success-banner').classList.add('show');
+    }
+  }
+
+  function resetRiver() {
+    entities.forEach(e => { e.side = 'left'; e.onBoat = false; });
+    boatSide = 'left';
+    boatCargo = null;
+    crossCount = 0;
+    document.getElementById('success-banner').classList.remove('show');
+    document.getElementById('river-log').innerHTML = '<div class="log-entry">시뮬레이션을 다시 시작합니다. 캐릭터를 클릭해 배에 태우세요!</div>';
+    renderRiver();
+  }
+
+  function addLog(msg, type='') {
+    const log = document.getElementById('river-log');
+    const div = document.createElement('div');
+    div.className = 'log-entry ' + type;
+    div.textContent = msg;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  // ── PNG SAVE ──
+  function savePNG() {
+    const target = document.getElementById('snapshot-target');
+    showToast('이미지를 생성 중... 잠시만요!');
+    html2canvas(target, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false
+    }).then(canvas => {
+      const link = document.createElement('a');
+      const name = document.getElementById('input-name').value || '학생';
+      link.download = `배움노트_${name}_문제의상태와구조화.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('✅ PNG로 저장했어요!');
+    }).catch(err => {
+      showToast('저장 중 오류가 발생했어요. 다시 시도해주세요.');
+    });
+  }
+
+  function clearNotes() {
+    if (confirm('배움 노트 내용을 지울까요?')) {
+      document.getElementById('notes-input').value = '';
+      document.getElementById('reflection-input').value = '';
+    }
+  }
+
+  // ── TOAST ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // INIT
+  renderRiver();
+</script>
+</body>
+</html>

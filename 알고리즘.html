@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>알고리즘의 이해와 표현 | 중학 정보</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --blue: #007AFF;
+    --blue-light: #E8F1FF;
+    --green: #34C759;
+    --green-light: #E8F9ED;
+    --orange: #FF9500;
+    --orange-light: #FFF4E5;
+    --red: #FF3B30;
+    --red-light: #FFF0EF;
+    --purple: #AF52DE;
+    --purple-light: #F5EAFF;
+    --teal: #5AC8FA;
+    --teal-light: #E5F6FE;
+    --mint: #00C7BE;
+    --mint-light: #E0FAF9;
+    --pink: #FF2D55;
+    --pink-light: #FFF0F3;
+    --gray1: #1C1C1E;
+    --gray2: #3A3A3C;
+    --gray3: #6C6C70;
+    --gray4: #AEAEB2;
+    --gray5: #D1D1D6;
+    --gray6: #F2F2F7;
+    --white: #FFFFFF;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--gray6);color:var(--gray1);min-height:100vh;line-height:1.6;}
+
+  /* NAV */
+  .top-nav{background:rgba(255,255,255,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.06);position:sticky;top:0;z-index:100;padding:0 24px;}
+  .nav-inner{max-width:900px;margin:0 auto;height:52px;display:flex;align-items:center;justify-content:space-between;}
+  .nav-brand{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:var(--gray1);}
+  .nav-badge{background:var(--mint);color:white;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.3px;}
+  .nav-tabs{display:flex;gap:4px;}
+  .nav-tab{background:none;border:none;font-family:inherit;font-size:13px;font-weight:500;color:var(--gray3);padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:all .18s;}
+  .nav-tab:hover{background:var(--gray6);color:var(--gray1);}
+  .nav-tab.active{background:var(--mint-light);color:var(--mint);}
+
+  /* PAGES */
+  .page{display:none;max-width:900px;margin:0 auto;padding:32px 24px 80px;animation:fadeUp .35s ease;}
+  .page.active{display:block;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,#005C6B 0%,#00C7BE 50%,#5AC8FA 100%);border-radius:var(--radius-xl);padding:40px 40px 36px;color:white;margin-bottom:28px;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;top:-50px;right:-30px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,0.07);}
+  .hero::after{content:'';position:absolute;bottom:-70px;right:80px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.04);}
+  .hero-unit{font-size:13px;font-weight:500;opacity:.8;margin-bottom:6px;letter-spacing:.5px;}
+  .hero-title{font-size:32px;font-weight:700;line-height:1.2;margin-bottom:10px;}
+  .hero-sub{font-size:15px;opacity:.85;line-height:1.5;max-width:480px;}
+  .hero-goals{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;}
+  .hero-goal{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);border-radius:var(--radius-md);padding:10px 16px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;}
+  .hero-goal .num{background:rgba(255,255,255,0.3);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+
+  /* CARD */
+  .card{background:white;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid rgba(0,0,0,0.05);padding:24px;margin-bottom:16px;}
+  .card-title{font-size:13px;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px;}
+  .section-header{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+  .section-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .section-label{font-size:20px;font-weight:700;}
+
+  /* QUIZ */
+  .quiz-block{background:var(--gray6);border-radius:var(--radius-md);padding:20px;margin-top:16px;}
+  .quiz-q{font-size:15px;font-weight:600;margin-bottom:16px;line-height:1.5;}
+  .quiz-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+  .choice-btn{background:white;border:1.5px solid var(--gray5);border-radius:var(--radius-sm);padding:12px 14px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;text-align:left;transition:all .18s;color:var(--gray1);display:flex;align-items:center;gap:8px;}
+  .choice-btn:hover{border-color:var(--mint);background:var(--mint-light);color:var(--mint);}
+  .choice-btn.correct{background:var(--green-light);border-color:var(--green);color:#1a7a35;}
+  .choice-btn.wrong{background:var(--red-light);border-color:var(--red);color:var(--red);}
+  .choice-btn.disabled{pointer-events:none;opacity:.5;}
+  .choice-label{width:22px;height:22px;border-radius:50%;background:var(--gray5);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .quiz-feedback{border-radius:var(--radius-sm);padding:12px 16px;font-size:14px;font-weight:500;display:none;line-height:1.5;}
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback.ok{background:var(--green-light);color:#1a7a35;border:1px solid #b7ebc7;}
+  .quiz-feedback.ng{background:var(--red-light);color:#cc2a22;border:1px solid #ffc8c5;}
+
+  /* ALGO DEFINITION BOX */
+  .def-box{background:linear-gradient(135deg,var(--mint-light),var(--teal-light));border-radius:var(--radius-lg);padding:22px 24px;border:1px solid rgba(0,199,190,0.2);margin:16px 0;}
+  .def-label{font-size:12px;font-weight:700;color:var(--mint);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
+  .def-text{font-size:15px;color:var(--gray1);line-height:1.8;}
+  .def-text strong{color:var(--mint);}
+
+  /* STRUCTURE CARDS */
+  .struct-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0;}
+  .struct-card{border-radius:var(--radius-md);padding:18px 16px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .22s;position:relative;}
+  .struct-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+  .struct-card.seq{background:var(--teal-light);border-color:rgba(90,200,250,0.3);}
+  .struct-card.sel{background:var(--orange-light);border-color:rgba(255,149,0,0.25);}
+  .struct-card.rep{background:var(--purple-light);border-color:rgba(175,82,222,0.2);}
+  .struct-card.active-card{border-width:2.5px;}
+  .struct-card.seq.active-card{border-color:var(--teal);}
+  .struct-card.sel.active-card{border-color:var(--orange);}
+  .struct-card.rep.active-card{border-color:var(--purple);}
+  .struct-icon{font-size:32px;margin-bottom:10px;}
+  .struct-name{font-size:14px;font-weight:700;margin-bottom:6px;}
+  .struct-desc{font-size:12px;color:var(--gray3);line-height:1.5;}
+  .struct-detail{display:none;background:white;border-radius:var(--radius-md);padding:14px 16px;margin-top:10px;font-size:13px;color:var(--gray2);line-height:1.6;text-align:left;}
+  .struct-detail.show{display:block;}
+
+  /* FLOWCHART SYMBOLS */
+  .symbols-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;}
+  .sym-card{background:var(--gray6);border-radius:var(--radius-md);padding:14px 10px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .2s;}
+  .sym-card:hover{border-color:var(--mint);background:var(--mint-light);}
+  .sym-card.matched{border-color:var(--green);background:var(--green-light);}
+  .sym-shape{display:flex;justify-content:center;align-items:center;margin-bottom:8px;height:44px;}
+  .sym-name{font-size:12px;font-weight:700;color:var(--gray2);margin-bottom:3px;}
+  .sym-use{font-size:11px;color:var(--gray3);}
+
+  /* SVG shapes */
+  .shape-oval{width:60px;height:28px;background:var(--mint);border-radius:50px;}
+  .shape-rect{width:60px;height:28px;background:var(--blue);border-radius:4px;}
+  .shape-diamond{width:36px;height:36px;background:var(--orange);transform:rotate(45deg);border-radius:3px;}
+  .shape-diamond-inner{transform:rotate(-45deg);font-size:10px;font-weight:700;color:white;display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
+  .shape-parallelogram{width:54px;height:28px;background:var(--purple);transform:skewX(-15deg);border-radius:3px;}
+  .shape-arrow{width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:22px solid var(--gray3);}
+
+  /* FLOWCHART BUILDER */
+  .flowchart-area{background:var(--gray6);border-radius:var(--radius-lg);padding:20px;margin:16px 0;}
+  .fc-palette{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--gray5);}
+  .fc-piece{display:flex;align-items:center;gap:6px;background:white;border:1.5px solid var(--gray5);border-radius:var(--radius-sm);padding:8px 12px;cursor:grab;font-size:12px;font-weight:600;user-select:none;transition:all .15s;}
+  .fc-piece:hover{border-color:var(--mint);background:var(--mint-light);}
+  .fc-piece:active{cursor:grabbing;transform:scale(1.04);}
+  .fc-canvas{display:flex;flex-direction:column;align-items:center;gap:0;min-height:320px;background:white;border-radius:var(--radius-md);padding:20px 16px;border:2px dashed var(--gray5);transition:border-color .18s;}
+  .fc-canvas.over{border-color:var(--mint);}
+  .fc-node{display:flex;align-items:center;justify-content:center;width:200px;cursor:default;position:relative;}
+  .fc-node .delete-btn{position:absolute;right:-28px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray4);cursor:pointer;font-size:16px;padding:4px;transition:color .15s;}
+  .fc-node .delete-btn:hover{color:var(--red);}
+  .fc-connector{width:2px;height:20px;background:var(--gray4);margin:0 auto;}
+  .fc-arrow{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid var(--gray4);margin:0 auto 0;}
+  .fc-start,.fc-end{background:var(--mint);color:white;border-radius:50px;padding:8px 24px;font-size:13px;font-weight:700;text-align:center;width:160px;}
+  .fc-end{background:var(--gray3);}
+  .fc-process{background:white;border:2px solid var(--blue);color:var(--blue);border-radius:var(--radius-sm);padding:10px 16px;font-size:13px;font-weight:600;text-align:center;width:200px;}
+  .fc-decision{position:relative;width:160px;height:60px;display:flex;align-items:center;justify-content:center;}
+  .fc-decision-shape{width:140px;height:56px;background:white;border:2px solid var(--orange);transform:skewX(-25deg);display:flex;align-items:center;justify-content:center;border-radius:3px;}
+  .fc-decision-text{transform:skewX(25deg);font-size:12px;font-weight:700;color:var(--orange);text-align:center;}
+  .fc-io{background:white;border:2px solid var(--purple);color:var(--purple);transform:skewX(-15deg);padding:10px 20px;font-size:13px;font-weight:600;border-radius:2px;}
+  .fc-io-inner{transform:skewX(15deg);text-align:center;}
+  .fc-placeholder{color:var(--gray4);font-size:13px;text-align:center;padding:20px;}
+
+  /* ALGO EXAMPLES */
+  .algo-tabs{display:flex;gap:6px;margin-bottom:16px;}
+  .algo-tab{background:var(--gray6);border:none;border-radius:var(--radius-sm);padding:8px 16px;font-family:inherit;font-size:13px;font-weight:600;color:var(--gray3);cursor:pointer;transition:all .18s;}
+  .algo-tab.active{background:var(--mint);color:white;}
+  .algo-tab:hover:not(.active){background:var(--gray5);color:var(--gray1);}
+  .algo-panel{display:none;}
+  .algo-panel.active{display:block;animation:fadeUp .25s ease;}
+
+  /* NATURAL LANG */
+  .nl-steps{counter-reset:step;display:flex;flex-direction:column;gap:8px;}
+  .nl-step{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--gray6);border-radius:var(--radius-sm);border-left:3px solid var(--mint);}
+  .nl-step-num{background:var(--mint);color:white;border-radius:50%;width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+  .nl-step.branch{border-left-color:var(--orange);}
+  .nl-step.branch .nl-step-num{background:var(--orange);}
+  .nl-step-text{font-size:14px;color:var(--gray2);line-height:1.5;}
+
+  /* FLOWCHART STATIC */
+  .fc-static{display:flex;flex-direction:column;align-items:center;gap:0;padding:16px;}
+  .fcs-node{display:flex;flex-direction:column;align-items:center;}
+  .fcs-conn{width:2px;height:18px;background:var(--gray4);}
+  .fcs-arrow-down{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid var(--gray4);}
+  .fcs-start,.fcs-end{background:var(--mint);color:white;border-radius:50px;padding:8px 28px;font-size:13px;font-weight:700;}
+  .fcs-end{background:var(--gray3);}
+  .fcs-process{background:white;border:2px solid var(--blue);color:var(--blue);border-radius:var(--radius-sm);padding:10px 20px;font-size:13px;font-weight:600;min-width:180px;text-align:center;}
+  .fcs-io{background:white;border:2px solid var(--purple);color:var(--purple);padding:10px 24px;font-size:13px;font-weight:600;transform:skewX(-15deg);border-radius:2px;min-width:180px;}
+  .fcs-io-inner{transform:skewX(15deg);text-align:center;}
+  .fcs-diamond-wrap{position:relative;width:200px;height:70px;display:flex;align-items:center;justify-content:center;}
+  .fcs-diamond{width:180px;height:64px;background:white;border:2px solid var(--orange);transform:skewX(-25deg);display:flex;align-items:center;justify-content:center;border-radius:3px;}
+  .fcs-diamond-text{transform:skewX(25deg);font-size:12px;font-weight:700;color:var(--orange);text-align:center;}
+  .fcs-label{font-size:11px;font-weight:700;color:var(--orange);}
+  .fcs-branch{display:flex;gap:0;align-items:flex-start;width:340px;}
+  .fcs-branch-col{display:flex;flex-direction:column;align-items:center;flex:1;}
+
+  /* CPR */
+  .cpr-scene{background:linear-gradient(145deg,#1a1a2e,#16213e);border-radius:var(--radius-xl);padding:28px;color:white;margin:16px 0;}
+  .cpr-title{font-size:14px;font-weight:700;text-align:center;margin-bottom:20px;opacity:.8;}
+  .cpr-steps{display:flex;flex-direction:column;gap:10px;}
+  .cpr-step{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:var(--radius-md);cursor:pointer;transition:all .2s;border:1.5px solid rgba(255,255,255,0.08);}
+  .cpr-step:hover{border-color:rgba(90,200,250,0.4);background:rgba(90,200,250,0.08);}
+  .cpr-step.active-step{border-color:var(--teal);background:rgba(90,200,250,0.15);}
+  .cpr-step-icon{font-size:24px;flex-shrink:0;}
+  .cpr-step-body{}
+  .cpr-step-name{font-size:13px;font-weight:700;margin-bottom:2px;}
+  .cpr-step-type{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;display:inline-block;}
+  .type-seq{background:rgba(90,200,250,0.25);color:var(--teal);}
+  .type-sel{background:rgba(255,149,0,0.25);color:var(--orange);}
+  .type-rep{background:rgba(175,82,222,0.25);color:var(--purple);}
+  .cpr-progress{background:rgba(255,255,255,0.1);border-radius:20px;height:6px;margin-top:16px;overflow:hidden;}
+  .cpr-progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--blue));border-radius:20px;transition:width .4s ease;}
+  .cpr-run-btn{background:var(--teal);color:var(--gray1);border:none;border-radius:var(--radius-sm);padding:12px 24px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .18s;margin-top:14px;width:100%;}
+  .cpr-run-btn:hover{background:#48B8E8;}
+  .cpr-run-btn:disabled{opacity:.4;cursor:not-allowed;}
+  .cpr-badge{display:none;background:linear-gradient(135deg,var(--green),#1a7a35);border-radius:var(--radius-lg);padding:16px 20px;text-align:center;margin-top:12px;color:white;}
+  .cpr-badge.show{display:block;}
+
+  /* DRAG MATCH */
+  .match-outer{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;}
+  .drag-chip{background:var(--mint);color:white;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:600;cursor:grab;user-select:none;transition:all .15s;box-shadow:var(--shadow-sm);}
+  .drag-chip:active{cursor:grabbing;transform:scale(1.05);}
+  .drag-chip.gray{background:var(--gray3);}
+  .drop-zone{min-height:44px;background:white;border:2px dashed var(--gray5);border-radius:var(--radius-sm);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;transition:all .18s;font-size:13px;color:var(--gray4);}
+  .drop-zone.over{border-color:var(--mint);background:var(--mint-light);}
+  .drop-zone.correct{border-color:var(--green);background:var(--green-light);}
+
+  /* NOTES */
+  .notes-area{width:100%;min-height:160px;background:var(--gray6);border:1.5px solid var(--gray5);border-radius:var(--radius-md);padding:16px;font-family:inherit;font-size:14px;line-height:1.7;color:var(--gray1);resize:vertical;transition:border-color .18s;margin-bottom:12px;}
+  .notes-area:focus{outline:none;border-color:var(--mint);background:white;box-shadow:0 0 0 3px rgba(0,199,190,.12);}
+  .notes-area::placeholder{color:var(--gray4);}
+  .reflection-card{background:var(--purple-light);border-radius:var(--radius-lg);padding:24px;border:1px solid rgba(175,82,222,.15);}
+  .reflection-title{font-size:16px;font-weight:700;color:var(--purple);margin-bottom:8px;}
+  .reflection-subtitle{font-size:13px;color:var(--gray3);margin-bottom:14px;}
+  .reflection-textarea{width:100%;min-height:120px;background:white;border:1.5px solid rgba(175,82,222,.3);border-radius:var(--radius-md);padding:14px 16px;font-family:inherit;font-size:14px;line-height:1.7;color:var(--gray1);resize:vertical;transition:border-color .18s;}
+  .reflection-textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(175,82,222,.12);}
+  .reflection-textarea::placeholder{color:var(--gray4);}
+  .student-info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
+  .info-field{display:flex;flex-direction:column;gap:4px;}
+  .info-label{font-size:11px;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.5px;}
+  .info-input{border:1.5px solid var(--gray5);border-radius:var(--radius-sm);padding:8px 12px;font-family:inherit;font-size:14px;color:var(--gray1);background:white;transition:border-color .18s;}
+  .info-input:focus{outline:none;border-color:var(--mint);box-shadow:0 0 0 3px rgba(0,199,190,.12);}
+
+  /* BUTTONS */
+  .action-btn{background:var(--mint);color:white;border:none;border-radius:var(--radius-sm);padding:10px 20px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .18s;}
+  .action-btn:hover{background:#00AFA7;transform:translateY(-1px);}
+  .action-btn.secondary{background:var(--gray6);color:var(--gray1);border:1px solid var(--gray5);}
+  .action-btn.secondary:hover{background:var(--gray5);transform:none;}
+  .save-png-btn{background:var(--mint);color:white;border:none;border-radius:var(--radius-sm);padding:10px 20px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .18s;}
+  .save-png-btn:hover{background:#00AFA7;}
+
+  /* SNAPSHOT */
+  #snapshot-target{background:white;border-radius:var(--radius-xl);padding:32px;border:1px solid var(--gray5);}
+  .snapshot-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--gray5);}
+  .snapshot-logo{width:44px;height:44px;background:var(--mint);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;}
+  .snapshot-meta{flex:1;}
+  .snapshot-meta-title{font-size:16px;font-weight:700;}
+  .snapshot-meta-sub{font-size:13px;color:var(--gray3);margin-top:2px;}
+  .snapshot-date{font-size:12px;color:var(--gray4);}
+  .section-divider{height:1px;background:var(--gray5);margin:24px 0;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gray1);color:white;padding:12px 24px;border-radius:var(--radius-md);font-size:14px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* MISC */
+  .tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;margin:2px;}
+  .tag-mint{background:var(--mint-light);color:var(--mint);}
+  .tag-teal{background:var(--teal-light);color:#1a7aaf;}
+  .tag-orange{background:var(--orange-light);color:#885500;}
+  .tag-purple{background:var(--purple-light);color:#7a35af;}
+  .mt-16{margin-top:16px;}
+  .mt-24{margin-top:24px;}
+  .free-input{width:100%;min-height:70px;background:var(--gray6);border:1.5px solid var(--gray5);border-radius:var(--radius-md);padding:12px 14px;font-family:inherit;font-size:14px;line-height:1.7;color:var(--gray1);resize:vertical;transition:border-color .18s;}
+  .free-input:focus{outline:none;border-color:var(--mint);background:white;box-shadow:0 0 0 3px rgba(0,199,190,.12);}
+  .free-input::placeholder{color:var(--gray4);}
+  @media(max-width:640px){
+    .struct-grid,.symbols-grid{grid-template-columns:1fr 1fr;}
+    .quiz-choices,.match-outer{grid-template-columns:1fr;}
+    .student-info{grid-template-columns:1fr;}
+    .hero-title{font-size:24px;}
+    .fcs-branch{width:100%;}
+    .algo-tabs{flex-wrap:wrap;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="nav-badge">정보</span>
+      알고리즘의 이해와 표현
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('learn')">📖 학습</button>
+      <button class="nav-tab" onclick="showPage('activity')">🧩 활동</button>
+      <button class="nav-tab" onclick="showPage('notes')">📝 노트</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ PAGE 1: 학습 ══════════ -->
+<div id="page-learn" class="page active">
+
+  <div class="hero">
+    <div class="hero-unit">Ⅲ 알고리즘과 프로그래밍 · 03단원</div>
+    <div class="hero-title">알고리즘의 이해와 표현</div>
+    <div class="hero-sub">문제를 해결하는 순서를 명확하게 표현하는 방법, 알고리즘을 배워요.</div>
+    <div class="hero-goals">
+      <div class="hero-goal"><span class="num">1</span> 알고리즘의 중요성을 설명할 수 있다</div>
+      <div class="hero-goal"><span class="num">2</span> 알고리즘의 표현 방법을 설명할 수 있다</div>
+    </div>
+  </div>
+
+  <!-- 알고리즘의 의미 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--mint-light);">🧭</div>
+      <div class="section-label">1. 알고리즘이란?</div>
+    </div>
+
+    <div class="def-box">
+      <div class="def-label">알고리즘 정의</div>
+      <div class="def-text">
+        추상화를 거쳐 추출한 <strong>핵심 요소</strong>를 이용하여 문제를
+        <strong>초기 상태에서 목표 상태로 변화</strong>시키기 위해<br>
+        해야 할 작업을 <strong>순서대로 설명하거나 구조화하여 표현</strong>한 것
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;">
+      <div style="background:var(--teal-light);border-radius:var(--radius-md);padding:16px;border:1px solid rgba(90,200,250,.25);">
+        <div style="font-size:13px;font-weight:700;color:#1a7aaf;margin-bottom:6px;">🎯 왜 중요한가요?</div>
+        <div style="font-size:13px;color:var(--gray2);line-height:1.7;">
+          알고리즘을 통해 문제의 상태를 <strong>초기 → 목표</strong> 상태로 변화시킬 수 있어요.<br>
+          잘못 설계된 알고리즘은 문제를 해결할 수 없기 때문에 <strong>효율적인 설계</strong>가 중요합니다.
+        </div>
+      </div>
+      <div style="background:var(--orange-light);border-radius:var(--radius-md);padding:16px;border:1px solid rgba(255,149,0,.2);">
+        <div style="font-size:13px;font-weight:700;color:#885500;margin-bottom:6px;">🎢 예시: 놀이공원</div>
+        <div style="font-size:13px;color:var(--gray2);line-height:1.7;">
+          <strong>초기 상태:</strong> 아무 기구도 이용하지 않음<br>
+          <strong>현재 상태:</strong> 하나씩 이용하며 변화<br>
+          <strong>목표 상태:</strong> 모든 기구 이용 완료 ✓
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-block mt-16">
+      <div class="quiz-q">❓ 알고리즘에 대한 설명으로 옳지 않은 것은?</div>
+      <div class="quiz-choices">
+        <button class="choice-btn" onclick="answerQuiz(this,'q1',false)"><span class="choice-label">A</span> 해야 할 작업을 순서대로 표현한 것이다</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q1',false)"><span class="choice-label">B</span> 추상화의 핵심 요소를 이용한다</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q1',true)"><span class="choice-label">C</span> 알고리즘은 반드시 하나만 존재한다</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q1',false)"><span class="choice-label">D</span> 초기 상태에서 목표 상태로 변화시킨다</button>
+      </div>
+      <div id="fb-q1" class="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- 알고리즘 표현 방법 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--teal-light);">📝</div>
+      <div class="section-label">2. 알고리즘 표현 방법</div>
+    </div>
+    <p style="font-size:14px;color:var(--gray3);margin-bottom:16px;">같은 알고리즘을 <strong>자연어</strong>와 <strong>순서도</strong>로 표현할 수 있어요. 탭을 눌러 비교해보세요!</p>
+
+    <div class="algo-tabs">
+      <button class="algo-tab active" onclick="switchAlgoTab('natural')">📖 자연어</button>
+      <button class="algo-tab" onclick="switchAlgoTab('flowchart')">📊 순서도</button>
+    </div>
+
+    <!-- 자연어 -->
+    <div id="tab-natural" class="algo-panel active">
+      <div style="background:var(--gray6);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--gray3);margin-bottom:12px;">
+        💡 <strong>자연어:</strong> 우리가 일상에서 사용하는 언어로 표현 — 누구나 쉽게 이해할 수 있지만 모호할 수 있어요.
+      </div>
+      <div class="nl-steps">
+        <div class="nl-step"><div class="nl-step-num">1</div><div class="nl-step-text">이용자에게서 <strong>대출 도서를 반납</strong>받는다.</div></div>
+        <div class="nl-step"><div class="nl-step-num">2</div><div class="nl-step-text"><strong>반납일을 확인</strong>한다.</div></div>
+        <div class="nl-step branch"><div class="nl-step-num">3</div><div class="nl-step-text">만약 도서의 반납일이 지났으면 ➍로 이동하고, <strong>그렇지 않으면 프로그램을 종료</strong>한다.</div></div>
+        <div class="nl-step"><div class="nl-step-num">4</div><div class="nl-step-text"><strong>연체일을 계산</strong>한다.</div></div>
+        <div class="nl-step"><div class="nl-step-num">5</div><div class="nl-step-text"><strong>연체일을 알려 주고</strong> 프로그램을 종료한다.</div></div>
+      </div>
+    </div>
+
+    <!-- 순서도 -->
+    <div id="tab-flowchart" class="algo-panel">
+      <div style="background:var(--gray6);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--gray3);margin-bottom:12px;">
+        💡 <strong>순서도:</strong> 약속된 기호로 표현 — 문제 해결 과정과 흐름을 <strong>한눈에 파악</strong>하기 쉬워 정확하게 표현할 수 있어요.
+      </div>
+      <div class="fc-static" style="background:var(--gray6);border-radius:var(--radius-md);padding:24px;">
+        <div class="fcs-node"><div class="fcs-start">시작</div></div>
+        <div class="fcs-conn"></div><div class="fcs-arrow-down"></div>
+        <div class="fcs-node"><div class="fcs-io"><div class="fcs-io-inner">대출 도서 반납받기</div></div></div>
+        <div class="fcs-conn"></div><div class="fcs-arrow-down"></div>
+        <div class="fcs-node"><div class="fcs-process">반납일 확인</div></div>
+        <div class="fcs-conn"></div><div class="fcs-arrow-down"></div>
+        <div class="fcs-node">
+          <div class="fcs-diamond-wrap">
+            <div class="fcs-diamond"><div class="fcs-diamond-text">연체되었는가?</div></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:0;width:340px;justify-content:center;margin:0 auto;">
+          <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+            <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px;">아니오</div>
+            <div class="fcs-conn"></div><div class="fcs-arrow-down"></div>
+            <div class="fcs-end">종료</div>
+          </div>
+          <div style="width:40px;height:2px;background:var(--gray4);margin-top:28px;"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+            <div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:4px;">예</div>
+            <div class="fcs-conn"></div><div class="fcs-arrow-down"></div>
+            <div class="fcs-process">연체일 계산</div>
+            <div class="fcs-conn"></div><div class="fcs-arrow-down"></div>
+            <div class="fcs-io"><div class="fcs-io-inner">연체일 알림</div></div>
+            <div class="fcs-conn"></div><div class="fcs-arrow-down"></div>
+            <div class="fcs-end">종료</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-block mt-16">
+      <div class="quiz-q">❓ 순서도에 대한 설명으로 옳은 것은?</div>
+      <div class="quiz-choices">
+        <button class="choice-btn" onclick="answerQuiz(this,'q2',false)"><span class="choice-label">A</span> 일상 언어로 알고리즘을 표현하는 방법이다</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q2',true)"><span class="choice-label">B</span> 약속된 기호로 흐름을 한눈에 파악할 수 있다</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q2',false)"><span class="choice-label">C</span> 자연어보다 이해하기 어렵다</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q2',false)"><span class="choice-label">D</span> 프로그래밍 언어의 일종이다</button>
+      </div>
+      <div id="fb-q2" class="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- 순서도 기호 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--orange-light);">🔷</div>
+      <div class="section-label">3. 순서도 기호 알아보기</div>
+    </div>
+    <p style="font-size:14px;color:var(--gray3);margin-bottom:16px;">카드를 클릭하면 각 기호의 사용법을 확인할 수 있어요!</p>
+
+    <div class="symbols-grid">
+      <div class="sym-card" onclick="toggleSym(this,'sym-d1')">
+        <div class="sym-shape"><div class="shape-oval"></div></div>
+        <div class="sym-name">타원</div>
+        <div class="sym-use">시작 / 종료</div>
+      </div>
+      <div class="sym-card" onclick="toggleSym(this,'sym-d2')">
+        <div class="sym-shape"><div class="shape-rect"></div></div>
+        <div class="sym-name">직사각형</div>
+        <div class="sym-use">처리 (연산·작업)</div>
+      </div>
+      <div class="sym-card" onclick="toggleSym(this,'sym-d3')">
+        <div class="sym-shape" style="height:48px;">
+          <div class="shape-diamond"><div class="shape-diamond-inner">?</div></div>
+        </div>
+        <div class="sym-name">마름모</div>
+        <div class="sym-use">조건 판단 (예/아니오)</div>
+      </div>
+      <div class="sym-card" onclick="toggleSym(this,'sym-d4')">
+        <div class="sym-shape"><div class="shape-parallelogram"></div></div>
+        <div class="sym-name">평행사변형</div>
+        <div class="sym-use">입력 / 출력</div>
+      </div>
+    </div>
+
+    <div id="sym-d1" class="sym-detail" style="display:none;background:var(--mint-light);border-radius:var(--radius-md);padding:12px 16px;font-size:13px;color:var(--gray2);border:1px solid rgba(0,199,190,.2);">
+      <strong>⬭ 타원:</strong> 알고리즘의 <strong>시작과 끝</strong>을 나타냅니다. 모든 순서도는 타원으로 시작하고 타원으로 끝납니다. 예) <span class="tag tag-mint">시작</span> <span class="tag tag-mint">종료</span>
+    </div>
+    <div id="sym-d2" class="sym-detail" style="display:none;background:var(--blue-light);border-radius:var(--radius-md);padding:12px 16px;font-size:13px;color:var(--gray2);border:1px solid rgba(0,122,255,.15);">
+      <strong>▬ 직사각형:</strong> <strong>처리 단계</strong>를 나타냅니다. 계산, 값 변경, 연산 등 구체적인 작업을 씁니다. 예) <span class="tag" style="background:var(--blue-light);color:var(--blue);">연체일 계산</span>
+    </div>
+    <div id="sym-d3" class="sym-detail" style="display:none;background:var(--orange-light);border-radius:var(--radius-md);padding:12px 16px;font-size:13px;color:var(--gray2);border:1px solid rgba(255,149,0,.2);">
+      <strong>◇ 마름모:</strong> <strong>조건 판단</strong>을 나타냅니다. 질문에 따라 <span style="color:var(--green);font-weight:700;">예</span> 또는 <span style="color:var(--red);font-weight:700;">아니오</span> 두 방향으로 흐름이 나뉩니다. 예) <span class="tag tag-orange">연체되었는가?</span>
+    </div>
+    <div id="sym-d4" class="sym-detail" style="display:none;background:var(--purple-light);border-radius:var(--radius-md);padding:12px 16px;font-size:13px;color:var(--gray2);border:1px solid rgba(175,82,222,.15);">
+      <strong>▱ 평행사변형:</strong> <strong>입력·출력</strong>을 나타냅니다. 데이터를 받거나 결과를 출력할 때 사용합니다. 예) <span class="tag tag-purple">대출 도서 반납받기</span>
+    </div>
+
+    <div class="quiz-block mt-16">
+      <div class="quiz-q">❓ 순서도에서 "연체되었는가?"처럼 조건에 따라 흐름이 나뉘는 기호의 모양은?</div>
+      <div class="quiz-choices">
+        <button class="choice-btn" onclick="answerQuiz(this,'q3',false)"><span class="choice-label">A</span> 타원</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q3',false)"><span class="choice-label">B</span> 직사각형</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q3',true)"><span class="choice-label">C</span> 마름모</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q3',false)"><span class="choice-label">D</span> 평행사변형</button>
+      </div>
+      <div id="fb-q3" class="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- 알고리즘 3가지 구조 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--purple-light);">⚙️</div>
+      <div class="section-label">4. 알고리즘의 3가지 구조</div>
+    </div>
+    <p style="font-size:14px;color:var(--gray3);margin-bottom:16px;">카드를 클릭하면 자세한 설명과 예시를 볼 수 있어요!</p>
+
+    <div class="struct-grid">
+      <div class="struct-card seq" onclick="toggleStruct(this,'det-seq')">
+        <div class="struct-icon">➡️</div>
+        <div class="struct-name" style="color:#1a7aaf;">순차 구조</div>
+        <div class="struct-desc">정해진 순서대로<br>작업을 하나씩 실행</div>
+        <div id="det-seq" class="struct-detail">
+          하나의 작업이 끝나면 다음 작업을 순서대로 실행해요.<br><br>
+          <strong>예)</strong> 아침 루틴<br>
+          일어나기 → 세수하기 → 밥 먹기 → 학교 가기
+        </div>
+      </div>
+      <div class="struct-card sel" onclick="toggleStruct(this,'det-sel')">
+        <div class="struct-icon">🔀</div>
+        <div class="struct-name" style="color:#885500;">선택 구조</div>
+        <div class="struct-desc">조건에 따라 처리하는<br>내용·순서가 달라짐</div>
+        <div id="det-sel" class="struct-detail">
+          조건의 만족 여부에 따라 작업을 다르게 실행해요.<br><br>
+          <strong>예)</strong> 날씨 확인<br>
+          비가 오면 → 우산 챙기기<br>
+          비가 안 오면 → 그냥 출발
+        </div>
+      </div>
+      <div class="struct-card rep" onclick="toggleStruct(this,'det-rep')">
+        <div class="struct-icon">🔁</div>
+        <div class="struct-name" style="color:#7a35af;">반복 구조</div>
+        <div class="struct-desc">조건을 만족할 때까지<br>같은 작업을 반복</div>
+        <div id="det-rep" class="struct-detail">
+          정해진 횟수만큼 또는 조건을 만족할 때까지 반복해요.<br><br>
+          <strong>예)</strong> 줄넘기 100번<br>
+          횟수 < 100이면 → 계속 뛰기<br>
+          횟수 = 100이면 → 완료!
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-block mt-16">
+      <div class="quiz-q">❓ "비가 오면 우산을 가져가고, 비가 오지 않으면 그냥 나간다"는 알고리즘 구조는?</div>
+      <div class="quiz-choices">
+        <button class="choice-btn" onclick="answerQuiz(this,'q4',false)"><span class="choice-label">A</span> 순차 구조</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q4',true)"><span class="choice-label">B</span> 선택 구조</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q4',false)"><span class="choice-label">C</span> 반복 구조</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q4',false)"><span class="choice-label">D</span> 병렬 구조</button>
+      </div>
+      <div id="fb-q4" class="quiz-feedback"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ PAGE 2: 활동 ══════════ -->
+<div id="page-activity" class="page">
+
+  <!-- 활동 1: CPR 알고리즘 시뮬레이션 -->
+  <div class="card">
+    <div style="background:linear-gradient(135deg,var(--mint-light),var(--teal-light));border-radius:var(--radius-md);padding:16px 20px;margin-bottom:16px;border:1px solid rgba(0,199,190,.15);">
+      <div style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--mint);background:white;padding:4px 12px;border-radius:20px;margin-bottom:10px;border:1px solid rgba(0,199,190,.2);">❤️ 지식 충전소</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:6px;">심폐소생술 (CPR) 알고리즘 체험하기</div>
+      <div style="font-size:14px;color:var(--gray2);line-height:1.6;">CPR 과정에서 <span class="tag tag-teal">순차</span> <span class="tag tag-orange">선택</span> <span class="tag tag-purple">반복</span> 구조가 어디에 쓰이는지 확인해보세요!</div>
+    </div>
+
+    <div class="cpr-scene">
+      <div class="cpr-title">🚨 심폐소생술 알고리즘</div>
+      <div class="cpr-steps" id="cpr-steps">
+        <div class="cpr-step" data-i="0">
+          <div class="cpr-step-icon">📞</div>
+          <div class="cpr-step-body">
+            <div class="cpr-step-name">119 신고 및 도움 요청</div>
+            <span class="cpr-step-type type-seq">순차 구조</span>
+          </div>
+        </div>
+        <div class="cpr-step" data-i="1">
+          <div class="cpr-step-icon">🔍</div>
+          <div class="cpr-step-body">
+            <div class="cpr-step-name">반응 확인 (의식이 있는가?)</div>
+            <span class="cpr-step-type type-sel">선택 구조</span>
+          </div>
+        </div>
+        <div class="cpr-step" data-i="2">
+          <div class="cpr-step-icon">🫀</div>
+          <div class="cpr-step-body">
+            <div class="cpr-step-name">가슴 압박 30회 실시</div>
+            <span class="cpr-step-type type-rep">반복 구조</span>
+          </div>
+        </div>
+        <div class="cpr-step" data-i="3">
+          <div class="cpr-step-icon">💨</div>
+          <div class="cpr-step-body">
+            <div class="cpr-step-name">인공 호흡 2회 실시</div>
+            <span class="cpr-step-type type-seq">순차 구조</span>
+          </div>
+        </div>
+        <div class="cpr-step" data-i="4">
+          <div class="cpr-step-icon">🔄</div>
+          <div class="cpr-step-body">
+            <div class="cpr-step-name">반응 있을 때까지 압박·호흡 반복</div>
+            <span class="cpr-step-type type-rep">반복 구조</span>
+          </div>
+        </div>
+        <div class="cpr-step" data-i="5">
+          <div class="cpr-step-icon">✅</div>
+          <div class="cpr-step-body">
+            <div class="cpr-step-name">구급대원 도착 시 인계</div>
+            <span class="cpr-step-type type-seq">순차 구조</span>
+          </div>
+        </div>
+      </div>
+      <div class="cpr-progress"><div class="cpr-progress-fill" id="cpr-fill" style="width:0%"></div></div>
+      <button class="cpr-run-btn" id="cpr-btn" onclick="runCPR()">▶ CPR 알고리즘 단계별 실행</button>
+      <div class="cpr-badge" id="cpr-badge">
+        <div style="font-size:28px;margin-bottom:6px;">🎉</div>
+        <div style="font-size:16px;font-weight:700;">CPR 알고리즘 완주!</div>
+        <div style="font-size:13px;opacity:.85;margin-top:4px;">순차·선택·반복 구조를 모두 확인했어요!</div>
+      </div>
+    </div>
+
+    <div class="quiz-block">
+      <div class="quiz-q">❓ CPR에서 "가슴 압박 30회 실시"는 어떤 알고리즘 구조인가요?</div>
+      <div class="quiz-choices">
+        <button class="choice-btn" onclick="answerQuiz(this,'q5',false)"><span class="choice-label">A</span> 순차 구조</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q5',false)"><span class="choice-label">B</span> 선택 구조</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q5',true)"><span class="choice-label">C</span> 반복 구조</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q5',false)"><span class="choice-label">D</span> 병렬 구조</button>
+      </div>
+      <div id="fb-q5" class="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- 활동 2: 순서도 기호 매칭 드래그 -->
+  <div class="card">
+    <div style="background:linear-gradient(135deg,var(--teal-light),var(--orange-light));border-radius:var(--radius-md);padding:16px 20px;margin-bottom:16px;border:1px solid rgba(90,200,250,.15);">
+      <div style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#1a7aaf;background:white;padding:4px 12px;border-radius:20px;margin-bottom:10px;">🔷 탐구 활동 · 개별</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px;">순서도 기호 드래그 매칭</div>
+      <div style="font-size:14px;color:var(--gray2);">각 기호 이름을 끌어서 알맞은 설명에 연결해보세요.</div>
+    </div>
+
+    <div class="match-outer">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--gray3);margin-bottom:8px;">기호 카드 (드래그하세요)</div>
+        <div id="chip-bank" style="display:flex;flex-direction:column;gap:8px;">
+          <div class="drag-chip" draggable="true" id="chip-oval" ondragstart="ds(event,'chip-oval')">⬭ 타원</div>
+          <div class="drag-chip gray" draggable="true" id="chip-rect" ondragstart="ds(event,'chip-rect')">▬ 직사각형</div>
+          <div class="drag-chip" style="background:var(--orange);" draggable="true" id="chip-dia" ondragstart="ds(event,'chip-dia')">◇ 마름모</div>
+          <div class="drag-chip" style="background:var(--purple);" draggable="true" id="chip-para" ondragstart="ds(event,'chip-para')">▱ 평행사변형</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--gray3);margin-bottom:4px;">시작 / 종료</div>
+          <div id="dz-oval" class="drop-zone" ondragover="dov(event)" ondrop="dop(event,'dz-oval','chip-oval')" ondragleave="dlv(event)">여기에 놓으세요</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--gray3);margin-bottom:4px;">계산·처리 작업</div>
+          <div id="dz-rect" class="drop-zone" ondragover="dov(event)" ondrop="dop(event,'dz-rect','chip-rect')" ondragleave="dlv(event)">여기에 놓으세요</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--gray3);margin-bottom:4px;">조건 판단 (예/아니오)</div>
+          <div id="dz-dia" class="drop-zone" ondragover="dov(event)" ondrop="dop(event,'dz-dia','chip-dia')" ondragleave="dlv(event)">여기에 놓으세요</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--gray3);margin-bottom:4px;">입력 / 출력</div>
+          <div id="dz-para" class="drop-zone" ondragover="dov(event)" ondrop="dop(event,'dz-para','chip-para')" ondragleave="dlv(event)">여기에 놓으세요</div>
+        </div>
+      </div>
+    </div>
+    <button class="action-btn" onclick="checkMatch()" style="font-size:13px;">✅ 매칭 확인</button>
+    <div id="match-result" style="margin-top:10px;font-size:13px;"></div>
+  </div>
+
+  <!-- 활동 3: 나만의 알고리즘 순서도 만들기 -->
+  <div class="card">
+    <div style="background:linear-gradient(135deg,var(--purple-light),var(--mint-light));border-radius:var(--radius-md);padding:16px 20px;margin-bottom:16px;border:1px solid rgba(175,82,222,.12);">
+      <div style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--purple);background:white;padding:4px 12px;border-radius:20px;margin-bottom:10px;">✍️ 탐구 활동 · 개별</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px;">나만의 알고리즘 순서도 만들기</div>
+      <div style="font-size:14px;color:var(--gray2);">일상의 문제를 골라 자연어로 표현하고, 순서도 블록을 끌어다 놓아 나만의 알고리즘을 만들어보세요!</div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <div style="font-size:13px;font-weight:700;color:var(--gray3);margin-bottom:6px;">🎯 해결할 문제</div>
+      <input id="my-algo-problem" class="info-input" type="text" placeholder="예: 학교 갈 준비하기, 라면 끓이기, 방 청소하기..." style="width:100%;font-size:14px;padding:12px 16px;">
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <div style="font-size:13px;font-weight:700;color:var(--gray3);margin-bottom:6px;">📖 자연어로 표현하기</div>
+      <textarea class="free-input" id="my-natural" placeholder="문제를 해결하는 단계를 순서대로 써보세요.&#10;예)&#10;1. 물을 끓인다.&#10;2. 만약 물이 끓으면 → 면과 수프를 넣는다.&#10;3. 3분 동안 끓인다. (반복)&#10;4. 완성!"></textarea>
+    </div>
+
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--gray3);margin-bottom:8px;">📊 순서도 블록 조립 (드래그)</div>
+      <div class="flowchart-area">
+        <div class="fc-palette">
+          <div class="fc-piece" draggable="true" ondragstart="fcDragStart(event,'start')">
+            <div class="shape-oval" style="width:40px;height:18px;"></div> 시작
+          </div>
+          <div class="fc-piece" draggable="true" ondragstart="fcDragStart(event,'process')">
+            <div style="width:30px;height:16px;background:var(--blue);border-radius:3px;"></div> 처리
+          </div>
+          <div class="fc-piece" draggable="true" ondragstart="fcDragStart(event,'decision')">
+            <div style="width:22px;height:22px;background:var(--orange);transform:rotate(45deg);border-radius:2px;"></div> 조건
+          </div>
+          <div class="fc-piece" draggable="true" ondragstart="fcDragStart(event,'io')">
+            <div style="width:32px;height:16px;background:var(--purple);transform:skewX(-12deg);border-radius:2px;"></div> 입출력
+          </div>
+          <div class="fc-piece" draggable="true" ondragstart="fcDragStart(event,'end')">
+            <div class="shape-oval" style="width:40px;height:18px;background:var(--gray3);"></div> 종료
+          </div>
+        </div>
+        <div id="fc-canvas" class="fc-canvas"
+             ondragover="fcOver(event)" ondrop="fcDrop(event)" ondragleave="fcLeave(event)">
+          <div class="fc-placeholder">위 블록을 끌어다 놓아 순서도를 조립해보세요!</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button class="action-btn secondary" onclick="clearCanvas()" style="font-size:13px;">🗑 초기화</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;">
+      <div style="font-size:13px;font-weight:700;color:var(--gray3);margin-bottom:6px;">💭 구조 분석 (내 알고리즘에 쓰인 구조)</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:6px;background:var(--teal-light);border-radius:var(--radius-sm);padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;color:#1a7aaf;">
+          <input type="checkbox" id="has-seq"> 순차 구조
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;background:var(--orange-light);border-radius:var(--radius-sm);padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;color:#885500;">
+          <input type="checkbox" id="has-sel"> 선택 구조
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;background:var(--purple-light);border-radius:var(--radius-sm);padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;color:#7a35af;">
+          <input type="checkbox" id="has-rep"> 반복 구조
+        </label>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ PAGE 3: 배움 노트 ══════════ -->
+<div id="page-notes" class="page">
+  <div id="snapshot-target">
+    <div class="snapshot-header">
+      <div class="snapshot-logo">📝</div>
+      <div class="snapshot-meta">
+        <div class="snapshot-meta-title">배움 노트 — 알고리즘의 이해와 표현</div>
+        <div class="snapshot-meta-sub">중학 정보 · Ⅲ 알고리즘과 프로그래밍 · 03단원</div>
+      </div>
+      <div class="snapshot-date" id="today-date"></div>
+    </div>
+
+    <div class="student-info">
+      <div class="info-field"><div class="info-label">학년 · 반</div><input class="info-input" type="text" id="input-class" placeholder="예: 1학년 2반"></div>
+      <div class="info-field"><div class="info-label">번호</div><input class="info-input" type="text" id="input-num" placeholder="예: 15번"></div>
+      <div class="info-field"><div class="info-label">이름</div><input class="info-input" type="text" id="input-name" placeholder="홍길동"></div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div style="font-size:18px;font-weight:700;margin-bottom:12px;">📖 오늘 배운 내용</div>
+    <textarea class="notes-area" id="notes-input" placeholder="오늘 수업에서 배운 내용을 자유롭게 정리해보세요.&#10;&#10;예)&#10;• 알고리즘: 문제를 초기→목표 상태로 변화시키는 작업을 순서대로 표현한 것&#10;• 표현 방법: 자연어 (쉽지만 모호), 순서도 (약속된 기호, 한눈에 파악)&#10;• 순서도 기호: 타원(시작/종료), 직사각형(처리), 마름모(조건), 평행사변형(입출력)&#10;• 3가지 구조: 순차, 선택, 반복"></textarea>
+
+    <div class="section-divider"></div>
+
+    <div class="reflection-card">
+      <div class="reflection-title">💭 수업 소감문</div>
+      <div class="reflection-subtitle">오늘 수업에서 느낀 점, 어려웠던 점, 궁금한 점을 적어보세요.</div>
+      <textarea class="reflection-textarea" id="reflection-input" placeholder="오늘 수업에서 느낀 점을 자유롭게 적어주세요.&#10;&#10;예) 순서도를 처음 봤을 때는 기호들이 어렵게 느껴졌는데, 각 기호의 의미를 알고 나니 CPR 알고리즘 같은 실생활 예시와 연결해서 이해할 수 있었다..."></textarea>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div style="background:var(--mint-light);border-radius:var(--radius-md);padding:14px 18px;">
+      <div style="font-size:13px;font-weight:700;color:var(--mint);margin-bottom:6px;">📌 핵심 정리</div>
+      <div style="font-size:13px;color:var(--gray2);line-height:1.9;">
+        ① <strong>알고리즘</strong> → 핵심 요소를 이용해 초기→목표 상태로 변화시키는 작업을 순서대로 표현<br>
+        ② <strong>자연어</strong> → 일상 언어로 표현, 이해하기 쉽지만 모호할 수 있음<br>
+        ③ <strong>순서도</strong> → 약속된 기호 사용, 흐름을 한눈에 파악 가능<br>
+        ④ <strong>순차 구조</strong> → 순서대로 / <strong>선택 구조</strong> → 조건에 따라 / <strong>반복 구조</strong> → 조건 만족까지 반복
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
+    <button class="save-png-btn" onclick="savePNG()">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"><path d="M12 16l-4-4h2.5V4h3v8H16l-4 4zm-7 2h14v2H5v-2z"/></svg>
+      PNG로 저장하기
+    </button>
+    <button class="action-btn secondary" onclick="clearNotes()">🗑 내용 지우기</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // INIT
+  const d = new Date();
+  document.getElementById('today-date').textContent = `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+
+  // PAGE
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById('page-'+name).classList.add('active');
+    ['learn','activity','notes'].forEach((n,i)=>{
+      if(n===name) document.querySelectorAll('.nav-tab')[i].classList.add('active');
+    });
+  }
+
+  // QUIZ
+  function answerQuiz(btn, qid, correct) {
+    const block = btn.closest('.quiz-block');
+    block.querySelectorAll('.choice-btn').forEach(b=>b.classList.add('disabled'));
+    const fb = document.getElementById('fb-'+qid);
+    if(correct){
+      btn.classList.add('correct');
+      fb.className='quiz-feedback show ok';
+      fb.innerHTML='✨ 정답이에요! 아주 잘했어요.';
+    } else {
+      btn.classList.add('wrong');
+      fb.className='quiz-feedback show ng';
+      fb.innerHTML='🤔 아쉬워요! 다시 생각해볼까요?';
+      block.querySelectorAll('.choice-btn').forEach(b=>{
+        if(b.getAttribute('onclick').includes('true')) b.classList.add('correct');
+      });
+    }
+  }
+
+  // ALGO TABS
+  function switchAlgoTab(name) {
+    document.querySelectorAll('.algo-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.algo-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelector(`.algo-tab[onclick*="${name}"]`).classList.add('active');
+    document.getElementById('tab-'+name).classList.add('active');
+  }
+
+  // SYM TOGGLE
+  function toggleSym(card, detId) {
+    document.querySelectorAll('.sym-detail').forEach(el=>el.style.display='none');
+    document.querySelectorAll('.sym-card').forEach(c=>c.classList.remove('matched'));
+    const det = document.getElementById(detId);
+    if(det.style.display==='block'){det.style.display='none';}
+    else{det.style.display='block';card.classList.add('matched');}
+  }
+
+  // STRUCT TOGGLE
+  function toggleStruct(card, detId) {
+    const det = document.getElementById(detId);
+    const showing = det.classList.contains('show');
+    document.querySelectorAll('.struct-detail').forEach(d=>d.classList.remove('show'));
+    document.querySelectorAll('.struct-card').forEach(c=>c.classList.remove('active-card'));
+    if(!showing){det.classList.add('show');card.classList.add('active-card');}
+  }
+
+  // CPR SIMULATION
+  let cprStep = 0;
+  const totalCPR = 6;
+  function runCPR() {
+    const steps = document.querySelectorAll('.cpr-step');
+    steps.forEach(s=>s.classList.remove('active-step'));
+    if(cprStep < totalCPR) {
+      steps[cprStep].classList.add('active-step');
+      steps[cprStep].scrollIntoView({behavior:'smooth',block:'nearest'});
+      cprStep++;
+      const pct = Math.round((cprStep/totalCPR)*100);
+      document.getElementById('cpr-fill').style.width = pct+'%';
+      if(cprStep === totalCPR) {
+        document.getElementById('cpr-btn').disabled = true;
+        setTimeout(()=>document.getElementById('cpr-badge').classList.add('show'), 400);
+      }
+    }
+  }
+
+  // DRAG & DROP (match)
+  let dragging = null;
+  function ds(e,id){dragging=id;e.dataTransfer.effectAllowed='move';}
+  function dov(e){e.preventDefault();e.currentTarget.classList.add('over');}
+  function dlv(e){e.currentTarget.classList.remove('over');}
+  function dop(e,zoneId,expectedChip) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('over');
+    if(!dragging) return;
+    const chip = document.getElementById(dragging);
+    e.currentTarget.style.color='transparent';
+    e.currentTarget.appendChild(chip);
+    dragging = null;
+  }
+  function checkMatch() {
+    const pairs = {
+      'dz-oval':'chip-oval','dz-rect':'chip-rect','dz-dia':'chip-dia','dz-para':'chip-para'
+    };
+    let correct = 0;
+    Object.entries(pairs).forEach(([zoneId, chipId])=>{
+      const zone = document.getElementById(zoneId);
+      const chip = zone.querySelector('#'+chipId);
+      if(chip){correct++;zone.classList.add('correct');}
+      else{zone.classList.remove('correct');}
+    });
+    const res = document.getElementById('match-result');
+    if(correct===4){
+      res.style.color='var(--green)';res.style.fontWeight='700';
+      res.textContent='✨ 모두 정답! 순서도 기호를 완벽히 이해했어요!';
+    } else {
+      res.style.color='var(--orange)';res.style.fontWeight='600';
+      res.textContent=`🤔 ${correct}/4개 맞았어요. 기호 의미를 다시 확인해보세요!`;
+    }
+  }
+
+  // FLOWCHART BUILDER
+  let fcDragging = null;
+  function fcDragStart(e,type){fcDragging=type;e.dataTransfer.effectAllowed='copy';}
+  function fcOver(e){e.preventDefault();e.currentTarget.classList.add('over');}
+  function fcLeave(e){e.currentTarget.classList.remove('over');}
+  function fcDrop(e) {
+    e.preventDefault();
+    const canvas = document.getElementById('fc-canvas');
+    canvas.classList.remove('over');
+    const ph = canvas.querySelector('.fc-placeholder');
+    if(ph) ph.remove();
+    if(!fcDragging) return;
+
+    // add connector if not first
+    if(canvas.querySelector('.fc-node,.fc-start,.fc-end')) {
+      const conn = document.createElement('div'); conn.className='fc-connector'; canvas.appendChild(conn);
+      const arr = document.createElement('div'); arr.className='fc-arrow'; canvas.appendChild(arr);
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className='fc-node';
+    const delBtn = document.createElement('button');
+    delBtn.className='delete-btn'; delBtn.textContent='✕';
+    delBtn.onclick = ()=>{ wrapper.remove(); };
+
+    let inner;
+    const labels = {start:'시작',end:'종료',process:'처리 내용',decision:'조건?',io:'입/출력'};
+    if(fcDragging==='start'){
+      inner=document.createElement('div');inner.className='fc-start';inner.textContent='시작';inner.contentEditable='true';
+    } else if(fcDragging==='end'){
+      inner=document.createElement('div');inner.className='fc-end';inner.textContent='종료';inner.contentEditable='true';
+    } else if(fcDragging==='process'){
+      inner=document.createElement('div');inner.className='fc-process';inner.textContent='처리 내용';inner.contentEditable='true';
+    } else if(fcDragging==='decision'){
+      inner=document.createElement('div');inner.className='fc-decision';
+      inner.innerHTML='<div class="fc-decision-shape"><div class="fc-decision-text" contenteditable="true">조건?</div></div>';
+    } else if(fcDragging==='io'){
+      inner=document.createElement('div');inner.className='fc-io';
+      inner.innerHTML='<div class="fc-io-inner" contenteditable="true">입/출력</div>';
+    }
+    wrapper.appendChild(inner);
+    wrapper.appendChild(delBtn);
+    canvas.appendChild(wrapper);
+    fcDragging=null;
+  }
+  function clearCanvas() {
+    const c = document.getElementById('fc-canvas');
+    c.innerHTML='<div class="fc-placeholder">위 블록을 끌어다 놓아 순서도를 조립해보세요!</div>';
+  }
+
+  // PNG SAVE
+  function savePNG() {
+    showToast('이미지를 생성 중... 잠시만요!');
+    html2canvas(document.getElementById('snapshot-target'),{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false}).then(canvas=>{
+      const link=document.createElement('a');
+      const name=document.getElementById('input-name').value||'학생';
+      link.download=`배움노트_${name}_알고리즘의이해와표현.png`;
+      link.href=canvas.toDataURL('image/png');
+      link.click();
+      showToast('✅ PNG로 저장했어요!');
+    });
+  }
+  function clearNotes(){
+    if(confirm('배움 노트 내용을 지울까요?')){
+      document.getElementById('notes-input').value='';
+      document.getElementById('reflection-input').value='';
+    }
+  }
+
+  // TOAST
+  function showToast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg;t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2500);
+  }
+</script>
+</body>
+</html>

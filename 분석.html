@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>알고리즘의 분석과 설계 | 중학 정보</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --rose:#FF2D55; --rose-light:#FFF0F3;
+  --orange:#FF9500; --orange-light:#FFF4E5;
+  --green:#34C759; --green-light:#E8F9ED;
+  --blue:#007AFF; --blue-light:#E8F1FF;
+  --purple:#AF52DE; --purple-light:#F5EAFF;
+  --teal:#5AC8FA; --teal-light:#E5F6FE;
+  --indigo:#5856D6; --indigo-light:#EEEEFF;
+  --mint:#00C7BE; --mint-light:#E0FAF9;
+  --red:#FF3B30; --red-light:#FFF0EF;
+  --gray1:#1C1C1E; --gray2:#3A3A3C; --gray3:#6C6C70;
+  --gray4:#AEAEB2; --gray5:#D1D1D6; --gray6:#F2F2F7;
+  --white:#FFFFFF;
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:24px;
+  --sh-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --sh-md:0 4px 12px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--gray6);color:var(--gray1);min-height:100vh;line-height:1.6;}
+
+/* NAV */
+.top-nav{background:rgba(255,255,255,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,.06);position:sticky;top:0;z-index:200;padding:0 24px;}
+.nav-inner{max-width:960px;margin:0 auto;height:52px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;}
+.nav-badge{background:var(--rose);color:white;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.nav-tabs{display:flex;gap:3px;}
+.nav-tab{background:none;border:none;font-family:inherit;font-size:12px;font-weight:500;color:var(--gray3);padding:6px 11px;border-radius:var(--r-sm);cursor:pointer;transition:all .18s;white-space:nowrap;}
+.nav-tab:hover{background:var(--gray6);color:var(--gray1);}
+.nav-tab.active{background:var(--rose-light);color:var(--rose);}
+
+/* PAGES */
+.page{display:none;max-width:960px;margin:0 auto;padding:28px 20px 80px;animation:fadeUp .32s ease;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#8B0000 0%,#C41E3A 40%,#FF2D55 100%);border-radius:var(--r-xl);padding:38px 40px 34px;color:white;margin-bottom:24px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-50px;right:-30px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.06);}
+.hero::after{content:'';position:absolute;bottom:-70px;right:80px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.04);}
+.hero-unit{font-size:13px;font-weight:500;opacity:.8;margin-bottom:6px;letter-spacing:.5px;}
+.hero-title{font-size:30px;font-weight:700;line-height:1.2;margin-bottom:10px;}
+.hero-sub{font-size:14px;opacity:.85;line-height:1.5;max-width:480px;}
+.hero-goals{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+.hero-goal{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:var(--r-md);padding:9px 14px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:7px;}
+.hero-goal .num{background:rgba(255,255,255,.28);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+
+/* CARD */
+.card{background:white;border-radius:var(--r-lg);box-shadow:var(--sh-sm);border:1px solid rgba(0,0,0,.05);padding:22px;margin-bottom:14px;}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.section-icon{width:34px;height:34px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:17px;}
+.section-label{font-size:19px;font-weight:700;}
+
+/* QUIZ */
+.quiz-block{background:var(--gray6);border-radius:var(--r-md);padding:18px;margin-top:14px;}
+.quiz-q{font-size:14px;font-weight:600;margin-bottom:14px;line-height:1.5;}
+.quiz-choices{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.choice-btn{background:white;border:1.5px solid var(--gray5);border-radius:var(--r-sm);padding:11px 13px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;text-align:left;transition:all .18s;color:var(--gray1);display:flex;align-items:center;gap:8px;}
+.choice-btn:hover{border-color:var(--rose);background:var(--rose-light);color:var(--rose);}
+.choice-btn.correct{background:var(--green-light);border-color:var(--green);color:#1a7a35;}
+.choice-btn.wrong{background:var(--red-light);border-color:var(--red);color:var(--red);}
+.choice-btn.disabled{pointer-events:none;opacity:.5;}
+.choice-label{width:20px;height:20px;border-radius:50%;background:var(--gray5);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.quiz-fb{border-radius:var(--r-sm);padding:11px 14px;font-size:13px;font-weight:500;display:none;line-height:1.5;}
+.quiz-fb.show{display:block;}
+.quiz-fb.ok{background:var(--green-light);color:#1a7a35;border:1px solid #b7ebc7;}
+.quiz-fb.ng{background:var(--red-light);color:#cc2a22;border:1px solid #ffc8c5;}
+
+/* ALGO COMPARE TABLE */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;}
+.algo-card{border-radius:var(--r-md);padding:18px;border:2px solid transparent;transition:all .22s;cursor:pointer;}
+.algo-card.a{background:var(--blue-light);border-color:rgba(0,122,255,.2);}
+.algo-card.b{background:var(--rose-light);border-color:rgba(255,45,85,.2);}
+.algo-card.winner{border-width:2.5px;}
+.algo-card.a.winner{border-color:var(--blue);}
+.algo-card.b.winner{border-color:var(--rose);}
+.algo-title{font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.algo-step{font-size:12px;color:var(--gray2);line-height:1.8;padding-left:4px;}
+.algo-result{margin-top:10px;padding:9px 12px;border-radius:var(--r-sm);font-size:12px;font-weight:700;}
+.algo-result.a-res{background:white;color:var(--blue);}
+.algo-result.b-res{background:white;color:var(--rose);}
+
+/* MAP VIZ */
+.map-scene{background:var(--gray6);border-radius:var(--r-lg);padding:20px;margin:14px 0;position:relative;}
+.map-svg-wrap{display:flex;justify-content:center;}
+
+/* STRATEGY CARDS */
+.strategy-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+.strategy-card{border-radius:var(--r-md);padding:16px;border:1.5px solid transparent;cursor:pointer;transition:all .2s;}
+.strategy-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md);}
+.strategy-card.greedy{background:var(--orange-light);border-color:rgba(255,149,0,.25);}
+.strategy-card.divide{background:var(--teal-light);border-color:rgba(90,200,250,.25);}
+.strategy-card.trial{background:var(--purple-light);border-color:rgba(175,82,222,.2);}
+.strategy-card.backtrack{background:var(--indigo-light);border-color:rgba(88,86,214,.2);}
+.strategy-icon{font-size:26px;margin-bottom:8px;}
+.strategy-name{font-size:13px;font-weight:700;margin-bottom:4px;}
+.strategy-desc{font-size:12px;color:var(--gray3);line-height:1.5;}
+.strategy-detail{display:none;background:white;border-radius:var(--r-sm);padding:10px 12px;margin-top:8px;font-size:12px;color:var(--gray2);line-height:1.6;}
+.strategy-detail.show{display:block;}
+
+/* TAG */
+.tag{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;margin:2px;}
+.tag-rose{background:var(--rose-light);color:var(--rose);}
+.tag-blue{background:var(--blue-light);color:var(--blue);}
+.tag-green{background:var(--green-light);color:#1a7a35;}
+.tag-orange{background:var(--orange-light);color:#885500;}
+
+/* BUTTONS */
+.btn{background:var(--rose);color:white;border:none;border-radius:var(--r-sm);padding:9px 18px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;}
+.btn:hover{background:#E0003F;transform:translateY(-1px);}
+.btn.sec{background:var(--gray6);color:var(--gray1);border:1px solid var(--gray5);}
+.btn.sec:hover{background:var(--gray5);transform:none;}
+.btn.sm{padding:7px 13px;font-size:12px;}
+.save-btn{background:var(--rose);color:white;border:none;border-radius:var(--r-sm);padding:9px 18px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;}
+.save-btn:hover{background:#E0003F;}
+
+/* NOTES */
+.notes-area{width:100%;min-height:150px;background:var(--gray6);border:1.5px solid var(--gray5);border-radius:var(--r-md);padding:14px;font-family:inherit;font-size:14px;line-height:1.7;color:var(--gray1);resize:vertical;margin-bottom:10px;}
+.notes-area:focus{outline:none;border-color:var(--rose);background:white;box-shadow:0 0 0 3px rgba(255,45,85,.1);}
+.notes-area::placeholder{color:var(--gray4);}
+.refl-card{background:var(--purple-light);border-radius:var(--r-lg);padding:22px;border:1px solid rgba(175,82,222,.15);}
+.refl-title{font-size:15px;font-weight:700;color:var(--purple);margin-bottom:6px;}
+.refl-sub{font-size:13px;color:var(--gray3);margin-bottom:12px;}
+.refl-ta{width:100%;min-height:110px;background:white;border:1.5px solid rgba(175,82,222,.3);border-radius:var(--r-md);padding:12px 14px;font-family:inherit;font-size:14px;line-height:1.7;color:var(--gray1);resize:vertical;}
+.refl-ta:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(175,82,222,.12);}
+.refl-ta::placeholder{color:var(--gray4);}
+.stu-info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+.info-f{display:flex;flex-direction:column;gap:4px;}
+.info-l{font-size:11px;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.5px;}
+.info-i{border:1.5px solid var(--gray5);border-radius:var(--r-sm);padding:8px 12px;font-family:inherit;font-size:14px;color:var(--gray1);background:white;}
+.info-i:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 3px rgba(255,45,85,.1);}
+#snapshot-target{background:white;border-radius:var(--r-xl);padding:30px;border:1px solid var(--gray5);}
+.snap-header{display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--gray5);}
+.snap-logo{width:42px;height:42px;background:var(--rose);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:700;}
+.snap-meta-title{font-size:15px;font-weight:700;}
+.snap-meta-sub{font-size:12px;color:var(--gray3);margin-top:2px;}
+.divider{height:1px;background:var(--gray5);margin:20px 0;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gray1);color:white;padding:11px 22px;border-radius:var(--r-md);font-size:13px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ══════════════════════════════════════
+   FLOWCHART EDITOR
+══════════════════════════════════════ */
+#fc-page {padding:0;}
+.fc-outer{display:grid;grid-template-columns:220px 1fr;grid-template-rows:auto 1fr;height:calc(100vh - 52px);background:var(--gray6);}
+
+/* Toolbar top */
+.fc-toolbar{grid-column:1/-1;background:white;border-bottom:1px solid var(--gray5);padding:0 16px;height:50px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;position:sticky;top:52px;z-index:100;}
+.tb-sep{width:1px;height:24px;background:var(--gray5);margin:0 4px;flex-shrink:0;}
+.tb-btn{display:flex;align-items:center;gap:5px;background:none;border:1.5px solid transparent;border-radius:var(--r-sm);padding:6px 10px;font-family:inherit;font-size:12px;font-weight:600;color:var(--gray2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.tb-btn:hover{background:var(--gray6);border-color:var(--gray5);}
+.tb-btn.active-tb{background:var(--blue-light);border-color:var(--blue);color:var(--blue);}
+.tb-btn.danger:hover{background:var(--red-light);border-color:var(--red);color:var(--red);}
+.tb-btn:disabled{opacity:.35;cursor:not-allowed;}
+.tb-btn svg{width:15px;height:15px;flex-shrink:0;}
+.tb-label{font-size:11px;font-weight:700;color:var(--gray4);text-transform:uppercase;letter-spacing:.4px;margin-right:2px;}
+
+/* Left palette */
+.fc-palette{grid-column:1;background:white;border-right:1px solid var(--gray5);padding:14px 12px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;}
+.palette-section-label{font-size:10px;font-weight:700;color:var(--gray4);text-transform:uppercase;letter-spacing:.5px;margin:10px 0 4px;padding:0 2px;}
+.palette-section-label:first-child{margin-top:0;}
+.pal-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:var(--r-sm);border:1.5px solid var(--gray5);background:white;cursor:grab;user-select:none;transition:all .15s;font-size:12px;font-weight:600;color:var(--gray2);}
+.pal-item:hover{border-color:var(--blue);background:var(--blue-light);color:var(--blue);}
+.pal-item:active{cursor:grabbing;transform:scale(1.03);}
+.pal-preview{flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+
+/* Canvas */
+.fc-canvas-wrap{grid-column:2;background:#FAFAFA;background-image:radial-gradient(circle,#D1D1D6 1px,transparent 1px);background-size:20px 20px;overflow:auto;position:relative;cursor:default;}
+#fc-canvas{position:relative;width:2400px;height:2000px;transform-origin:top left;}
+
+/* Nodes */
+.fc-node{position:absolute;cursor:move;user-select:none;display:flex;align-items:center;justify-content:center;}
+.fc-node.selected .node-body{outline:2.5px solid var(--blue);outline-offset:2px;}
+.fc-node.hovered .node-body{outline:1.5px dashed var(--blue);outline-offset:2px;}
+
+/* Node bodies */
+.node-body{display:flex;align-items:center;justify-content:center;min-width:120px;min-height:40px;padding:8px 14px;font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:600;text-align:center;line-height:1.3;word-break:keep-all;position:relative;}
+.nb-terminal{background:var(--mint);color:white;border-radius:50px;min-width:100px;padding:9px 22px;}
+.nb-process{background:white;border:2.5px solid var(--blue);color:var(--blue);border-radius:var(--r-sm);min-width:140px;}
+.nb-decision{background:white;border:2.5px solid var(--orange);color:var(--orange);transform:rotate(0deg);clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);min-width:110px;min-height:70px;padding:8px 20px;}
+.nb-io{background:white;border:2.5px solid var(--purple);color:var(--purple);min-width:140px;clip-path:polygon(8% 0%,100% 0%,92% 100%,0% 100%);}
+.nb-connector{background:var(--green);color:white;border-radius:50%;width:32px;height:32px;min-width:32px;min-height:32px;padding:0;font-size:11px;}
+
+/* Port handles */
+.port{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--blue);border:2px solid white;opacity:0;transition:opacity .15s;cursor:crosshair;z-index:10;}
+.fc-node:hover .port,.fc-node.selected .port{opacity:1;}
+.port-t{top:-5px;left:50%;transform:translateX(-50%);}
+.port-b{bottom:-5px;left:50%;transform:translateX(-50%);}
+.port-l{left:-5px;top:50%;transform:translateY(-50%);}
+.port-r{right:-5px;top:50%;transform:translateY(-50%);}
+.port-bl{bottom:-5px;left:20%;transform:translateX(-50%);}
+.port-br{bottom:-5px;right:20%;transform:translateX(50%);}
+
+/* Resize handle */
+.resize-handle{position:absolute;bottom:-4px;right:-4px;width:10px;height:10px;background:var(--blue);border-radius:2px;cursor:se-resize;opacity:0;z-index:11;}
+.fc-node.selected .resize-handle{opacity:1;}
+
+/* SVG arrows */
+#arrow-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+.arrow-path{fill:none;stroke:var(--gray2);stroke-width:2;marker-end:url(#arrowhead);}
+.arrow-path.selected-arrow{stroke:var(--blue);stroke-width:2.5;}
+.arrow-path.preview-arrow{stroke:var(--blue);stroke-width:1.5;stroke-dasharray:5,3;opacity:.7;}
+.arrow-label-g{cursor:pointer;}
+.arrow-label-rect{fill:white;stroke:var(--gray5);stroke-width:1;rx:4;}
+.arrow-label-text{font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:600;fill:var(--gray2);}
+
+/* Inline edit overlay */
+#edit-overlay{display:none;position:absolute;z-index:500;background:white;border:2px solid var(--blue);border-radius:var(--r-sm);box-shadow:var(--sh-md);padding:2px;}
+#edit-input{border:none;outline:none;font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:600;min-width:100px;padding:4px 6px;background:transparent;color:var(--gray1);}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><span class="nav-badge">정보</span> 알고리즘의 분석과 설계</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('learn')">📖 학습</button>
+      <button class="nav-tab" onclick="showPage('fc')">📊 순서도 에디터</button>
+      <button class="nav-tab" onclick="showPage('notes')">📝 노트</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════ PAGE 1: 학습 ══════ -->
+<div id="page-learn" class="page active">
+
+  <div class="hero">
+    <div class="hero-unit">Ⅲ 알고리즘과 프로그래밍 · 04단원</div>
+    <div class="hero-title">알고리즘의 분석과 설계</div>
+    <div class="hero-sub">같은 문제도 다양한 알고리즘으로 풀 수 있어요. 어떤 알고리즘이 더 효율적인지 비교·분석하고 직접 설계해봐요.</div>
+    <div class="hero-goals">
+      <div class="hero-goal"><span class="num">1</span> 다양한 알고리즘을 비교·분석할 수 있다</div>
+      <div class="hero-goal"><span class="num">2</span> 문제에 적합한 알고리즘을 설계할 수 있다</div>
+    </div>
+  </div>
+
+  <!-- 알고리즘 비교 분석 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--rose-light);">🚑</div>
+      <div class="section-label">1. 응급차 이송 알고리즘 비교</div>
+    </div>
+    <p style="font-size:14px;color:var(--gray3);margin-bottom:16px;">같은 목적(병원 도착)이라도 <strong>기준에 따라 경로가 달라져요.</strong> 두 알고리즘을 직접 비교해보세요!</p>
+
+    <!-- 지도 SVG -->
+    <div class="map-scene">
+      <p style="font-size:12px;font-weight:700;color:var(--gray3);margin-bottom:12px;text-align:center;">🗺️ 집 → 병원 경로 지도 (숫자: 거리m / 분)</p>
+      <div class="map-svg-wrap">
+        <svg width="480" height="220" viewBox="0 0 480 220" style="max-width:100%;font-family:'Noto Sans KR',sans-serif;">
+          <defs>
+            <marker id="mA" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--blue)"/></marker>
+            <marker id="mB" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--rose)"/></marker>
+          </defs>
+          <!-- nodes -->
+          <g><ellipse cx="50" cy="110" rx="32" ry="20" fill="#E8F9ED" stroke="var(--green)" stroke-width="2"/><text x="50" y="114" text-anchor="middle" font-size="12" font-weight="700" fill="#1a7a35">🏠 집</text></g>
+          <g><rect x="155" y="40" width="70" height="36" rx="8" fill="#E5F6FE" stroke="var(--teal)" stroke-width="2"/><text x="190" y="63" text-anchor="middle" font-size="11" font-weight="700" fill="#1a7aaf">공원</text></g>
+          <g><rect x="155" y="142" width="70" height="36" rx="8" fill="var(--purple-light)" stroke="var(--purple)" stroke-width="2"/><text x="190" y="165" text-anchor="middle" font-size="11" font-weight="700" fill="var(--purple)">박물관</text></g>
+          <g><rect x="295" y="90" width="70" height="36" rx="8" fill="var(--orange-light)" stroke="var(--orange)" stroke-width="2"/><text x="330" y="113" text-anchor="middle" font-size="11" font-weight="700" fill="#885500">학교</text></g>
+          <g><ellipse cx="430" cy="110" rx="32" ry="20" fill="var(--rose-light)" stroke="var(--rose)" stroke-width="2"/><text x="430" y="114" text-anchor="middle" font-size="11" font-weight="700" fill="var(--rose)">🏥병원</text></g>
+          <!-- edges with labels: dist/time -->
+          <!-- home-park: 100m/5min -->
+          <line x1="80" y1="100" x2="157" y2="66" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="110" y="76" font-size="10" fill="var(--gray3)" text-anchor="middle">100m/5분</text>
+          <!-- home-museum: 300m/4min -->
+          <line x1="80" y1="120" x2="157" y2="152" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="110" y="148" font-size="10" fill="var(--gray3)" text-anchor="middle">300m/4분</text>
+          <!-- park-school: 400m/5min -->
+          <line x1="225" y1="62" x2="297" y2="98" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="265" y="72" font-size="10" fill="var(--gray3)" text-anchor="middle">400m/5분</text>
+          <!-- museum-school: 300m/4min -->
+          <line x1="225" y1="158" x2="297" y2="114" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="265" y="148" font-size="10" fill="var(--gray3)" text-anchor="middle">300m/4분</text>
+          <!-- school-hospital: 300m/4min -->
+          <line x1="365" y1="108" x2="398" y2="108" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="382" y="100" font-size="10" fill="var(--gray3)" text-anchor="middle">300m/4분</text>
+          <!-- extra: park-museum: 1100m -->
+          <line x1="190" y1="76" x2="190" y2="142" stroke="#ddd" stroke-width="1" stroke-dasharray="3,3"/>
+          <!-- Route A highlight: home→park→school→hospital (blue) -->
+          <path id="routeA" d="M80,100 L157,66 L297,98 L398,108" fill="none" stroke="var(--blue)" stroke-width="3" opacity="0" stroke-linecap="round" marker-end="url(#mA)"/>
+          <!-- Route B highlight: home→museum→school→hospital (rose) -->
+          <path id="routeB" d="M80,120 L157,152 L297,114 L398,110" fill="none" stroke="var(--rose)" stroke-width="3" opacity="0" stroke-linecap="round" marker-end="url(#mB)"/>
+        </svg>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:8px;">
+        <button class="btn sm" style="background:var(--blue);" onclick="showRoute('A')">🔵 알고리즘 A 경로 보기</button>
+        <button class="btn sm" onclick="showRoute('B')">🔴 알고리즘 B 경로 보기</button>
+        <button class="btn sm sec" onclick="showRoute(null)">초기화</button>
+      </div>
+    </div>
+
+    <div class="compare-grid">
+      <div class="algo-card a" id="card-a">
+        <div class="algo-title" style="color:var(--blue);">🔵 알고리즘 A <span class="tag tag-blue">최단 거리</span></div>
+        <div class="algo-step">
+          ❶ 집에서 출발한다.<br>
+          ❷ 현재 위치에서 <strong>가장 짧은 거리</strong>로 이동하고, 한 번 이동한 지역은 다시 이동하지 않는다.<br>
+          ❸ 병원에 도착했다면 종료하고 그렇지 않으면 ❷를 수행한다.
+        </div>
+        <div class="algo-result a-res">📍 집 → 공원(100m) → 학교(400m) → 병원(300m)<br>총 거리: <strong>1,100m</strong> / 총 시간: <strong>18분</strong></div>
+      </div>
+      <div class="algo-card b" id="card-b">
+        <div class="algo-title" style="color:var(--rose);">🔴 알고리즘 B <span class="tag tag-rose">최단 시간</span></div>
+        <div class="algo-step">
+          ❶ 집에서 출발한다.<br>
+          ❷ 현재 위치에서 <strong>이동 시간이 가장 짧은 길</strong>로 이동하고, 한 번 이동한 지역은 다시 이동하지 않는다.<br>
+          ❸ 병원에 도착했다면 종료하고 그렇지 않으면 ❷를 수행한다.
+        </div>
+        <div class="algo-result b-res">📍 집 → 박물관(4분) → 학교(4분) → 병원(4분)<br>총 거리: <strong>1,200m</strong> / 총 시간: <strong>14분</strong></div>
+      </div>
+    </div>
+
+    <div style="background:var(--rose-light);border-radius:var(--r-md);padding:14px 16px;border:1px solid rgba(255,45,85,.15);">
+      <span style="font-size:13px;font-weight:700;color:var(--rose);">🚑 결론:</span>
+      <span style="font-size:13px;color:var(--gray2);margin-left:6px;">응급차는 <strong>목숨이 걸린 상황</strong>이므로 거리보다 <strong>시간</strong>이 중요해요. 알고리즘 B(최단 시간)가 이 목적에 더 적합합니다!</span>
+    </div>
+
+    <div class="quiz-block mt-16" style="margin-top:14px;">
+      <div class="quiz-q">❓ 응급차 이송 상황에서 A·B 중 더 적합한 알고리즘은 무엇이고, 그 이유는?</div>
+      <div class="quiz-choices">
+        <button class="choice-btn" onclick="answerQuiz(this,'q1',false)"><span class="choice-label">A</span> 알고리즘 A — 거리가 짧아 연료를 아낄 수 있다</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q1',true)"><span class="choice-label">B</span> 알고리즘 B — 이동 시간이 짧아 더 빨리 도착한다</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q1',false)"><span class="choice-label">C</span> 둘 다 동일하다</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q1',false)"><span class="choice-label">D</span> 알고리즘 A — 더 단순하다</button>
+      </div>
+      <div id="fb-q1" class="quiz-fb"></div>
+    </div>
+  </div>
+
+  <!-- 알고리즘 설계 전략 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--orange-light);">🧠</div>
+      <div class="section-label">2. 알고리즘 설계 전략 4가지</div>
+    </div>
+    <p style="font-size:14px;color:var(--gray3);margin-bottom:14px;">카드를 클릭하면 자세한 예시를 볼 수 있어요!</p>
+
+    <div class="strategy-grid">
+      <div class="strategy-card greedy" onclick="toggleStrategy(this,'sd-greedy')">
+        <div class="strategy-icon">🏆</div>
+        <div class="strategy-name" style="color:#885500;">가장 최선인 방법 선택하기<br><small style="font-weight:400;font-size:11px;">(탐욕 알고리즘)</small></div>
+        <div class="strategy-desc">매 순간 현재 상황에서 가장 최선인 방법을 선택</div>
+        <div id="sd-greedy" class="strategy-detail"><strong>예)</strong> 응급차 알고리즘 B — 매 위치에서 가장 빠른 길을 즉시 선택해요. 자판기 거스름돈 계산도 매번 가장 큰 단위 동전부터 선택합니다.</div>
+      </div>
+      <div class="strategy-card divide" onclick="toggleStrategy(this,'sd-divide')">
+        <div class="strategy-icon">✂️</div>
+        <div class="strategy-name" style="color:#1a7aaf;">문제 나누기<br><small style="font-weight:400;font-size:11px;">(분할 정복)</small></div>
+        <div class="strategy-desc">큰 문제를 작은 문제로 나눠 각각 해결</div>
+        <div id="sd-divide" class="strategy-detail"><strong>예)</strong> 전화번호부 검색 — 책의 절반을 펼쳐 앞/뒤를 판단하고 다시 절반씩 나눕니다. (이진 탐색)</div>
+      </div>
+      <div class="strategy-card trial" onclick="toggleStrategy(this,'sd-trial')">
+        <div class="strategy-icon">🎲</div>
+        <div class="strategy-name" style="color:#7a35af;">시행착오 반복하기<br><small style="font-weight:400;font-size:11px;">(브루트 포스)</small></div>
+        <div class="strategy-desc">문제가 해결될 때까지 시행착오를 반복</div>
+        <div id="sd-trial" class="strategy-detail"><strong>예)</strong> 자물쇠 비밀번호 — 0000~9999 모든 경우를 하나씩 시도해서 맞는 번호를 찾습니다.</div>
+      </div>
+      <div class="strategy-card backtrack" onclick="toggleStrategy(this,'sd-back')">
+        <div class="strategy-icon">↩️</div>
+        <div class="strategy-name" style="color:#3634a3;">되추적하기<br><small style="font-weight:400;font-size:11px;">(백트래킹)</small></div>
+        <div class="strategy-desc">막히면 이전 단계로 돌아가 다른 방법 시도</div>
+        <div id="sd-back" class="strategy-detail"><strong>예)</strong> 미로 찾기 — 막다른 길을 만나면 왔던 길로 돌아가 다른 갈림길을 선택합니다.</div>
+      </div>
+    </div>
+
+    <div class="quiz-block" style="margin-top:14px;">
+      <div class="quiz-q">❓ "자물쇠 비밀번호 0000~9999를 모두 시도해본다"는 어떤 설계 전략인가요?</div>
+      <div class="quiz-choices">
+        <button class="choice-btn" onclick="answerQuiz(this,'q2',false)"><span class="choice-label">A</span> 가장 최선인 방법 선택</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q2',false)"><span class="choice-label">B</span> 문제 나누기</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q2',true)"><span class="choice-label">C</span> 시행착오 반복하기</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q2',false)"><span class="choice-label">D</span> 되추적하기</button>
+      </div>
+      <div id="fb-q2" class="quiz-fb"></div>
+    </div>
+
+    <div class="quiz-block" style="margin-top:10px;">
+      <div class="quiz-q">❓ 미로에서 막다른 길을 만났을 때 왔던 길로 돌아가 다른 길을 선택하는 전략은?</div>
+      <div class="quiz-choices">
+        <button class="choice-btn" onclick="answerQuiz(this,'q3',false)"><span class="choice-label">A</span> 탐욕 알고리즘</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q3',false)"><span class="choice-label">B</span> 시행착오 반복</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q3',false)"><span class="choice-label">C</span> 분할 정복</button>
+        <button class="choice-btn" onclick="answerQuiz(this,'q3',true)"><span class="choice-label">D</span> 되추적하기</button>
+      </div>
+      <div id="fb-q3" class="quiz-fb"></div>
+    </div>
+  </div>
+
+  <!-- 단원 마무리 성취 수준 -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--green-light);">✅</div>
+      <div class="section-label">3. 나의 성취 수준 확인</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div id="chk-row-1" style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--gray6);border-radius:var(--r-sm);cursor:pointer;" onclick="toggleCheck(this)">
+        <span style="font-size:18px;">⬜</span>
+        <span style="font-size:13px;color:var(--gray2);line-height:1.5;">문제의 상태를 정의하고 수행 가능한 형태로 구조화할 수 있다.</span>
+      </div>
+      <div id="chk-row-2" style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--gray6);border-radius:var(--r-sm);cursor:pointer;" onclick="toggleCheck(this)">
+        <span style="font-size:18px;">⬜</span>
+        <span style="font-size:13px;color:var(--gray2);line-height:1.5;">문제 해결을 위한 추상화의 중요성을 이해하고, 핵심 요소를 중심으로 알고리즘을 표현할 수 있다.</span>
+      </div>
+      <div id="chk-row-3" style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--gray6);border-radius:var(--r-sm);cursor:pointer;" onclick="toggleCheck(this)">
+        <span style="font-size:18px;">⬜</span>
+        <span style="font-size:13px;color:var(--gray2);line-height:1.5;">알고리즘의 중요성을 이해하고, 문제를 해결하는 다양한 알고리즘을 비교·분석할 수 있다.</span>
+      </div>
+      <div id="chk-row-4" style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--gray6);border-radius:var(--r-sm);cursor:pointer;" onclick="toggleCheck(this)">
+        <span style="font-size:18px;">⬜</span>
+        <span style="font-size:13px;color:var(--gray2);line-height:1.5;">사례를 중심으로 문제 해결에 적합한 전략을 선택하여 알고리즘을 설계할 수 있다.</span>
+      </div>
+    </div>
+    <div style="margin-top:12px;text-align:center;">
+      <button class="btn" onclick="showPage('fc')">📊 순서도 에디터로 알고리즘 설계하러 가기 →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════ PAGE 2: FLOWCHART EDITOR ══════ -->
+<div id="page-fc" class="page" style="padding:0;max-width:100%;">
+<div class="fc-outer">
+
+  <!-- Toolbar -->
+  <div class="fc-toolbar">
+    <span class="tb-label">도구</span>
+    <button class="tb-btn active-tb" id="tb-select" onclick="setTool('select')" title="선택/이동 (V)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 2l10 5.5-5 1.5-2 5z"/></svg> 선택
+    </button>
+    <button class="tb-btn" id="tb-connect" onclick="setTool('connect')" title="화살표 연결 (C)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="2" y1="14" x2="14" y2="2"/><polyline points="8,2 14,2 14,8"/></svg> 화살표
+    </button>
+    <div class="tb-sep"></div>
+    <span class="tb-label">추가</span>
+    <button class="tb-btn" onclick="addNode('terminal')" title="시작/종료">⬭ 시작·종료</button>
+    <button class="tb-btn" onclick="addNode('process')" title="처리">▬ 처리</button>
+    <button class="tb-btn" onclick="addNode('decision')" title="조건">◇ 조건</button>
+    <button class="tb-btn" onclick="addNode('io')" title="입출력">▱ 입출력</button>
+    <button class="tb-btn" onclick="addNode('connector')" title="연결점">⬤ 연결점</button>
+    <div class="tb-sep"></div>
+    <span class="tb-label">편집</span>
+    <button class="tb-btn" id="tb-undo" onclick="undo()" title="되돌리기 (Ctrl+Z)" disabled>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8a6 6 0 106-.5"/><polyline points="2,4 2,8 6,8"/></svg> 되돌리기
+    </button>
+    <button class="tb-btn" id="tb-redo" onclick="redo()" title="다시실행 (Ctrl+Y)" disabled>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 8a6 6 0 10-6-.5"/><polyline points="14,4 14,8 10,8"/></svg> 다시실행
+    </button>
+    <button class="tb-btn danger" id="tb-del" onclick="deleteSelected()" title="삭제 (Delete)" disabled>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3,4 13,4"/><path d="M5 4V2h6v2M6 7v5M10 7v5"/><rect x="3" y="4" width="10" height="10" rx="1"/></svg> 삭제
+    </button>
+    <div class="tb-sep"></div>
+    <button class="tb-btn" onclick="clearAll()" title="전체 초기화">🗑 전체 초기화</button>
+    <button class="tb-btn" onclick="saveImage()" title="이미지 저장">💾 이미지 저장</button>
+    <button class="tb-btn" onclick="loadExample()" title="예제 불러오기">📂 예제 보기</button>
+    <div style="margin-left:auto;font-size:11px;color:var(--gray4);white-space:nowrap;" id="status-bar">노드를 드래그하거나 팔레트에서 추가하세요</div>
+  </div>
+
+  <!-- Palette -->
+  <div class="fc-palette">
+    <div class="palette-section-label">기호 (드래그)</div>
+    <div class="pal-item" draggable="true" ondragstart="palDragStart(event,'terminal')">
+      <div class="pal-preview"><div style="background:var(--mint);color:white;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;">시작</div></div>
+      시작 / 종료
+    </div>
+    <div class="pal-item" draggable="true" ondragstart="palDragStart(event,'process')">
+      <div class="pal-preview"><div style="width:32px;height:18px;background:white;border:2px solid var(--blue);border-radius:3px;"></div></div>
+      처리 (작업)
+    </div>
+    <div class="pal-item" draggable="true" ondragstart="palDragStart(event,'decision')">
+      <div class="pal-preview"><div style="width:22px;height:22px;background:white;border:2px solid var(--orange);transform:rotate(45deg);border-radius:2px;"></div></div>
+      조건 판단
+    </div>
+    <div class="pal-item" draggable="true" ondragstart="palDragStart(event,'io')">
+      <div class="pal-preview"><div style="width:34px;height:18px;background:white;border:2px solid var(--purple);clip-path:polygon(8% 0%,100% 0%,92% 100%,0% 100%);"></div></div>
+      입력 / 출력
+    </div>
+    <div class="pal-item" draggable="true" ondragstart="palDragStart(event,'connector')">
+      <div class="pal-preview"><div style="width:18px;height:18px;background:var(--green);border-radius:50%;"></div></div>
+      연결점
+    </div>
+
+    <div class="palette-section-label">기호 안내</div>
+    <div style="font-size:11px;color:var(--gray3);line-height:1.9;padding:0 2px;">
+      <b style="color:var(--mint);">⬭</b> 타원 — 시작/종료<br>
+      <b style="color:var(--blue);">▬</b> 사각형 — 처리<br>
+      <b style="color:var(--orange);">◇</b> 마름모 — 조건<br>
+      <b style="color:var(--purple);">▱</b> 평행사변형 — 입출력<br>
+      <b style="color:var(--green);">⬤</b> 원 — 연결점
+    </div>
+
+    <div class="palette-section-label" style="margin-top:10px;">도움말</div>
+    <div style="font-size:11px;color:var(--gray3);line-height:1.8;padding:0 2px;">
+      • 노드 더블클릭: 텍스트 편집<br>
+      • 화살표 도구 후<br>&nbsp;&nbsp;포트(●) 드래그 연결<br>
+      • 화살표 더블클릭: 라벨 편집<br>
+      • 노드 선택 후 Delete<br>
+      • Ctrl+Z: 되돌리기<br>
+      • Ctrl+Y: 다시실행
+    </div>
+  </div>
+
+  <!-- Canvas -->
+  <div class="fc-canvas-wrap" id="canvas-wrap"
+       ondragover="canvasOver(event)" ondrop="canvasDrop(event)">
+    <div id="fc-canvas">
+      <svg id="arrow-svg">
+        <defs>
+          <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+            <polygon points="0 0, 9 3.5, 0 7" fill="var(--gray2)"/>
+          </marker>
+          <marker id="arrowhead-blue" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+            <polygon points="0 0, 9 3.5, 0 7" fill="var(--blue)"/>
+          </marker>
+          <marker id="arrowhead-preview" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+            <polygon points="0 0, 9 3.5, 0 7" fill="var(--blue)" opacity=".6"/>
+          </marker>
+        </defs>
+      </svg>
+      <div id="edit-overlay">
+        <input id="edit-input" type="text" placeholder="내용 입력..." />
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════ PAGE 3: NOTES ══════ -->
+<div id="page-notes" class="page">
+  <div id="snapshot-target">
+    <div class="snap-header">
+      <div class="snap-logo">📝</div>
+      <div>
+        <div class="snap-meta-title">배움 노트 — 알고리즘의 분석과 설계</div>
+        <div class="snap-meta-sub">중학 정보 · Ⅲ 알고리즘과 프로그래밍 · 04단원</div>
+      </div>
+      <div style="margin-left:auto;font-size:12px;color:var(--gray4);" id="today-date"></div>
+    </div>
+    <div class="stu-info">
+      <div class="info-f"><div class="info-l">학년·반</div><input class="info-i" type="text" id="ic" placeholder="1학년 2반"></div>
+      <div class="info-f"><div class="info-l">번호</div><input class="info-i" type="text" id="in" placeholder="15번"></div>
+      <div class="info-f"><div class="info-l">이름</div><input class="info-i" type="text" id="iname" placeholder="홍길동"></div>
+    </div>
+    <div class="divider"></div>
+    <div style="font-size:17px;font-weight:700;margin-bottom:10px;">📖 오늘 배운 내용</div>
+    <textarea class="notes-area" id="notes-input" placeholder="오늘 수업에서 배운 내용을 정리해보세요.&#10;&#10;예)&#10;• 같은 목적이라도 기준에 따라 다른 알고리즘이 나온다&#10;• 알고리즘 A: 최단 거리 / 알고리즘 B: 최단 시간&#10;• 응급차에는 최단 시간 알고리즘이 적합!&#10;• 설계 전략: ①탐욕 ②분할정복 ③브루트포스 ④백트래킹"></textarea>
+    <div class="divider"></div>
+    <div class="refl-card">
+      <div class="refl-title">💭 수업 소감문</div>
+      <div class="refl-sub">오늘 수업에서 느낀 점, 어려웠던 점, 궁금한 점을 적어보세요.</div>
+      <textarea class="refl-ta" id="refl-input" placeholder="오늘 순서도 에디터로 직접 알고리즘을 설계해보니..."></textarea>
+    </div>
+    <div class="divider"></div>
+    <div style="background:var(--rose-light);border-radius:var(--r-md);padding:13px 16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--rose);margin-bottom:5px;">📌 핵심 정리</div>
+      <div style="font-size:12px;color:var(--gray2);line-height:1.9;">
+        ① <b>알고리즘 분석</b> → 같은 문제도 기준(거리/시간)에 따라 다른 알고리즘이 나온다<br>
+        ② <b>탐욕 알고리즘</b> → 매 순간 가장 최선 선택 / <b>분할 정복</b> → 문제를 작게 나눠 해결<br>
+        ③ <b>브루트 포스</b> → 모든 경우 시도 / <b>백트래킹</b> → 막히면 이전 단계로 되돌아가기<br>
+        ④ <b>효율적인 알고리즘</b> → 문제 상황과 목적에 맞게 설계해야 한다
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;">
+    <button class="save-btn" onclick="savePNG()">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="white"><path d="M12 16l-4-4h2.5V4h3v8H16l-4 4zm-7 2h14v2H5v-2z"/></svg>
+      PNG로 저장하기
+    </button>
+    <button class="btn sec" onclick="clearNotes()">🗑 내용 지우기</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── INIT ──
+const d=new Date();
+document.getElementById('today-date').textContent=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+
+// ── PAGE ──
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  ['learn','fc','notes'].forEach((n,i)=>{if(n===name)document.querySelectorAll('.nav-tab')[i].classList.add('active');});
+}
+
+// ── QUIZ ──
+function answerQuiz(btn,qid,correct){
+  const block=btn.closest('.quiz-block');
+  block.querySelectorAll('.choice-btn').forEach(b=>b.classList.add('disabled'));
+  const fb=document.getElementById('fb-'+qid);
+  if(correct){btn.classList.add('correct');fb.className='quiz-fb show ok';fb.innerHTML='✨ 정답이에요!';}
+  else{btn.classList.add('wrong');fb.className='quiz-fb show ng';fb.innerHTML='🤔 아쉬워요! 다시 생각해볼까요?';block.querySelectorAll('.choice-btn').forEach(b=>{if(b.getAttribute('onclick').includes('true'))b.classList.add('correct');});}
+}
+
+// ── ROUTE MAP ──
+function showRoute(r){
+  document.getElementById('routeA').style.opacity=0;
+  document.getElementById('routeB').style.opacity=0;
+  document.getElementById('card-a').classList.remove('winner');
+  document.getElementById('card-b').classList.remove('winner');
+  if(r==='A'){document.getElementById('routeA').style.opacity=1;document.getElementById('card-a').classList.add('winner');}
+  else if(r==='B'){document.getElementById('routeB').style.opacity=1;document.getElementById('card-b').classList.add('winner');}
+}
+
+// ── STRATEGY TOGGLE ──
+function toggleStrategy(card,detId){
+  const det=document.getElementById(detId);
+  const showing=det.classList.contains('show');
+  document.querySelectorAll('.strategy-detail').forEach(d=>d.classList.remove('show'));
+  if(!showing)det.classList.add('show');
+}
+
+// ── CHECK BOXES ──
+function toggleCheck(row){
+  const sp=row.querySelector('span');
+  if(sp.textContent==='⬜'){sp.textContent='✅';row.style.background=var_green_light();}
+  else{sp.textContent='⬜';row.style.background='';}
+}
+function var_green_light(){return'#E8F9ED';}
+
+// ── NOTES ──
+function savePNG(){
+  showToast('이미지 생성 중...');
+  html2canvas(document.getElementById('snapshot-target'),{scale:2,useCORS:true,backgroundColor:'#fff',logging:false}).then(canvas=>{
+    const link=document.createElement('a');
+    link.download=`배움노트_${document.getElementById('iname').value||'학생'}_알고리즘분석설계.png`;
+    link.href=canvas.toDataURL('image/png');link.click();showToast('✅ PNG 저장 완료!');
+  });
+}
+function clearNotes(){if(confirm('내용을 지울까요?')){document.getElementById('notes-input').value='';document.getElementById('refl-input').value='';}}
+
+// ── TOAST ──
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+/* ═══════════════════════════════════════════════
+   FLOWCHART EDITOR ENGINE
+═══════════════════════════════════════════════ */
+const canvas=document.getElementById('fc-canvas');
+const svg=document.getElementById('arrow-svg');
+const editOverlay=document.getElementById('edit-overlay');
+const editInput=document.getElementById('edit-input');
+
+let nodes={};   // id -> {el, x, y, w, h, type, label}
+let arrows=[];  // {id, fromNode, fromPort, toNode, toPort, label, el(path), labelEl}
+let selectedNodes=new Set();
+let selectedArrow=null;
+let tool='select';
+let nodeCounter=0;
+let arrowCounter=0;
+let history=[];
+let historyIdx=-1;
+let isDragging=false;
+let dragOffsets={};
+let connectFrom=null; // {nodeId, port}
+let previewPath=null;
+let palDragType=null;
+
+// ── TOOL ──
+function setTool(t){
+  tool=t;
+  document.getElementById('tb-select').classList.toggle('active-tb',t==='select');
+  document.getElementById('tb-connect').classList.toggle('active-tb',t==='connect');
+  setStatus(t==='connect'?'포트(●)를 드래그해서 화살표를 연결하세요':'노드를 선택하거나 드래그해서 이동하세요');
+}
+function setStatus(msg){document.getElementById('status-bar').textContent=msg;}
+
+// ── ADD NODE ──
+function addNode(type,x,y,label){
+  const id='n'+(++nodeCounter);
+  x=x||200+(Math.random()*100|0);
+  y=y||150+(Math.random()*60|0);
+  label=label||(type==='terminal'?'시작':type==='process'?'처리':type==='decision'?'조건?':type==='io'?'입/출력':'●');
+  const el=document.createElement('div');
+  el.className='fc-node';
+  el.id='node-'+id;
+  el.style.left=x+'px';
+  el.style.top=y+'px';
+
+  const body=document.createElement('div');
+  body.className='node-body nb-'+type;
+  body.textContent=label;
+  el.appendChild(body);
+
+  // Ports
+  const ports=type==='decision'?['t','bl','br','l']:['t','b','l','r'];
+  ports.forEach(p=>{
+    const pt=document.createElement('div');
+    pt.className='port port-'+p;
+    pt.dataset.port=p;
+    pt.addEventListener('mousedown',e=>{if(tool==='connect'){e.stopPropagation();startConnect(id,p,e);}});
+    el.appendChild(pt);
+  });
+
+  // Resize handle
+  const rh=document.createElement('div');
+  rh.className='resize-handle';
+  rh.addEventListener('mousedown',e=>{e.stopPropagation();startResize(id,e);});
+  el.appendChild(rh);
+
+  el.addEventListener('mousedown',e=>{
+    if(e.target.classList.contains('port')||e.target.classList.contains('resize-handle'))return;
+    if(tool==='select'){e.stopPropagation();startDrag(id,e);}
+  });
+  el.addEventListener('dblclick',e=>{
+    if(e.target.classList.contains('port'))return;
+    startEdit(id);
+  });
+
+  canvas.appendChild(el);
+  nodes[id]={el,x,y,w:0,h:0,type,label};
+  setTimeout(()=>{
+    nodes[id].w=el.offsetWidth;
+    nodes[id].h=el.offsetHeight;
+  },0);
+  selectNode(id,false);
+  saveHistory();
+  updateDeleteBtn();
+  return id;
+}
+
+// ── SELECTION ──
+function selectNode(id,multi){
+  if(!multi){selectedNodes.forEach(nid=>{if(nodes[nid])nodes[nid].el.classList.remove('selected');});selectedNodes.clear();}
+  deselectArrow();
+  if(id){selectedNodes.add(id);nodes[id].el.classList.add('selected');}
+  updateDeleteBtn();
+}
+function deselectAll(){
+  selectedNodes.forEach(nid=>{if(nodes[nid])nodes[nid].el.classList.remove('selected');});
+  selectedNodes.clear();
+  deselectArrow();
+  updateDeleteBtn();
+}
+function deselectArrow(){
+  if(selectedArrow!=null){const a=arrows[selectedArrow];if(a&&a.el)a.el.classList.remove('selected-arrow');}
+  selectedArrow=null;
+}
+function updateDeleteBtn(){
+  const hasSel=selectedNodes.size>0||selectedArrow!=null;
+  document.getElementById('tb-del').disabled=!hasSel;
+}
+
+// ── DRAG NODES ──
+function startDrag(id,e){
+  if(!selectedNodes.has(id))selectNode(id,e.shiftKey);
+  isDragging=true;
+  dragOffsets={};
+  const rect=canvas.getBoundingClientRect();
+  const scale=getScale();
+  selectedNodes.forEach(nid=>{
+    const n=nodes[nid];
+    dragOffsets[nid]={dx:(e.clientX-rect.left)/scale-n.x, dy:(e.clientY-rect.top)/scale-n.y};
+  });
+  const onMove=ev=>{
+    if(!isDragging)return;
+    const r=canvas.getBoundingClientRect();
+    const sc=getScale();
+    selectedNodes.forEach(nid=>{
+      const n=nodes[nid];
+      const off=dragOffsets[nid];
+      n.x=Math.max(0,(ev.clientX-r.left)/sc-off.dx);
+      n.y=Math.max(0,(ev.clientY-r.top)/sc-off.dy);
+      n.el.style.left=n.x+'px';
+      n.el.style.top=n.y+'px';
+    });
+    redrawArrows();
+  };
+  const onUp=()=>{isDragging=false;document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);saveHistory();};
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
+}
+
+function getScale(){
+  const wrap=document.getElementById('canvas-wrap');
+  return 1; // no zoom yet
+}
+
+// ── RESIZE ──
+function startResize(id,e){
+  const n=nodes[id];
+  const startX=e.clientX,startY=e.clientY;
+  const startW=n.el.offsetWidth,startH=n.el.offsetHeight;
+  const onMove=ev=>{
+    const dw=ev.clientX-startX,dh=ev.clientY-startY;
+    n.el.style.width=Math.max(80,startW+dw)+'px';
+    n.el.style.height=Math.max(36,startH+dh)+'px';
+    n.el.querySelector('.node-body').style.width='100%';
+    n.el.querySelector('.node-body').style.height='100%';
+    n.w=n.el.offsetWidth;n.h=n.el.offsetHeight;
+    redrawArrows();
+  };
+  const onUp=()=>{document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);saveHistory();};
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
+}
+
+// ── CONNECT ──
+function portCenter(nodeId,port){
+  const n=nodes[nodeId];
+  const w=n.el.offsetWidth,h=n.el.offsetHeight;
+  const cx=n.x+w/2,cy=n.y+h/2;
+  const offsets={t:[0,-h/2],b:[0,h/2],l:[-w/2,0],r:[w/2,0],bl:[-w/4,h/2],br:[w/4,h/2]};
+  const o=offsets[port]||[0,0];
+  return{x:cx+o[0],y:cy+o[1]};
+}
+
+function startConnect(nodeId,port,e){
+  connectFrom={nodeId,port};
+  const rect=canvas.getBoundingClientRect();
+  const sc=getScale();
+  const from=portCenter(nodeId,port);
+
+  // preview line
+  previewPath=document.createElementNS('http://www.w3.org/2000/svg','path');
+  previewPath.classList.add('arrow-path','preview-arrow');
+  previewPath.setAttribute('marker-end','url(#arrowhead-preview)');
+  svg.appendChild(previewPath);
+
+  const onMove=ev=>{
+    const mx=(ev.clientX-rect.left)/sc,my=(ev.clientY-rect.top)/sc;
+    previewPath.setAttribute('d',bezierPath(from.x,from.y,mx,my));
+  };
+  const onUp=ev=>{
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
+    if(previewPath){previewPath.remove();previewPath=null;}
+    // find target port
+    const target=findPortAt(ev,nodeId);
+    if(target){addArrow(nodeId,port,target.nodeId,target.port);}
+    connectFrom=null;
+  };
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
+}
+
+function findPortAt(ev,excludeNode){
+  const rect=canvas.getBoundingClientRect();
+  const sc=getScale();
+  const mx=(ev.clientX-rect.left)/sc,my=(ev.clientY-rect.top)/sc;
+  for(const nid in nodes){
+    if(nid===excludeNode)continue;
+    const n=nodes[nid];
+    const ports=n.type==='decision'?['t','bl','br','l']:['t','b','l','r'];
+    for(const p of ports){
+      const c=portCenter(nid,p);
+      if(Math.hypot(c.x-mx,c.y-my)<18)return{nodeId:nid,port:p};
+    }
+  }
+  return null;
+}
+
+function bezierPath(x1,y1,x2,y2){
+  const dx=Math.abs(x2-x1)*0.5,dy=Math.abs(y2-y1)*0.5;
+  const cx1=x1+(x2>x1?dx:-dx)*0.8,cy1=y1+(y2>y1?dy:-dy)*0.1;
+  const cx2=x2-(x2>x1?dx:-dx)*0.8,cy2=y2-(y2>y1?dy:-dy)*0.1;
+  return`M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`;
+}
+
+// ── ARROWS ──
+function addArrow(fromNode,fromPort,toNode,toPort,label){
+  label=label||'';
+  const id=arrowCounter++;
+  const pathEl=document.createElementNS('http://www.w3.org/2000/svg','path');
+  pathEl.classList.add('arrow-path');
+  pathEl.setAttribute('marker-end','url(#arrowhead)');
+  pathEl.dataset.arrowId=id;
+  pathEl.addEventListener('click',e=>{e.stopPropagation();selectArrowById(id);});
+  pathEl.addEventListener('dblclick',e=>{e.stopPropagation();editArrowLabel(id);});
+
+  let labelG=null,labelRect=null,labelText=null;
+  if(true){
+    labelG=document.createElementNS('http://www.w3.org/2000/svg','g');
+    labelG.classList.add('arrow-label-g');
+    labelRect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    labelRect.classList.add('arrow-label-rect');
+    labelRect.setAttribute('rx','4');
+    labelText=document.createElementNS('http://www.w3.org/2000/svg','text');
+    labelText.classList.add('arrow-label-text');
+    labelText.setAttribute('text-anchor','middle');
+    labelText.setAttribute('dominant-baseline','middle');
+    labelG.appendChild(labelRect);labelG.appendChild(labelText);
+    labelG.addEventListener('dblclick',e=>{e.stopPropagation();editArrowLabel(id);});
+    svg.appendChild(labelG);
+  }
+
+  svg.insertBefore(pathEl,svg.firstChild);
+  const arrowObj={id,fromNode,fromPort,toNode,toPort,label,el:pathEl,labelG,labelRect,labelText};
+  arrows[id]=arrowObj;
+  drawArrow(id);
+  saveHistory();
+  return id;
+}
+
+function drawArrow(id){
+  const a=arrows[id];
+  if(!a||!nodes[a.fromNode]||!nodes[a.toNode])return;
+  const f=portCenter(a.fromNode,a.fromPort);
+  const t=portCenter(a.toNode,a.toPort);
+  // adjust endpoint slightly so arrowhead doesn't overlap node
+  const ang=Math.atan2(t.y-f.y,t.x-f.x);
+  const tx=t.x-Math.cos(ang)*4,ty=t.y-Math.sin(ang)*4;
+  a.el.setAttribute('d',bezierPath(f.x,f.y,tx,ty));
+
+  if(a.labelG){
+    const mx=(f.x+t.x)/2,my=(f.y+t.y)/2;
+    const txt=a.label||'';
+    a.labelText.textContent=txt;
+    if(txt){
+      const tw=txt.length*7+10;
+      a.labelRect.setAttribute('x',mx-tw/2);a.labelRect.setAttribute('y',my-10);
+      a.labelRect.setAttribute('width',tw);a.labelRect.setAttribute('height',20);
+      a.labelText.setAttribute('x',mx);a.labelText.setAttribute('y',my);
+      a.labelG.style.display='';
+    } else {a.labelG.style.display='none';}
+  }
+}
+
+function redrawArrows(){arrows.forEach((a,i)=>{if(a)drawArrow(i);});}
+
+function selectArrowById(id){
+  deselectAll();
+  if(selectedArrow===id){deselectArrow();return;}
+  deselectArrow();
+  selectedArrow=id;
+  if(arrows[id])arrows[id].el.classList.add('selected-arrow');
+  updateDeleteBtn();
+}
+
+function editArrowLabel(id){
+  const a=arrows[id];if(!a)return;
+  const label=prompt('화살표 라벨 입력 (비워두면 삭제):',a.label||'');
+  if(label===null)return;
+  a.label=label;
+  drawArrow(id);
+  saveHistory();
+}
+
+// ── INLINE EDIT ──
+let editingNodeId=null;
+function startEdit(id){
+  const n=nodes[id];if(!n)return;
+  editingNodeId=id;
+  const body=n.el.querySelector('.node-body');
+  const rect=body.getBoundingClientRect();
+  const canvasRect=canvas.getBoundingClientRect();
+  editOverlay.style.display='block';
+  editOverlay.style.left=(n.x+n.el.offsetWidth/2-60)+'px';
+  editOverlay.style.top=(n.y-40)+'px';
+  editInput.value=n.label;
+  editInput.focus();editInput.select();
+}
+editInput.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key==='Escape')commitEdit();
+});
+editInput.addEventListener('blur',()=>commitEdit());
+function commitEdit(){
+  if(editingNodeId&&nodes[editingNodeId]){
+    const val=editInput.value.trim()||nodes[editingNodeId].label;
+    nodes[editingNodeId].label=val;
+    nodes[editingNodeId].el.querySelector('.node-body').textContent=val;
+    setTimeout(()=>{nodes[editingNodeId].w=nodes[editingNodeId].el.offsetWidth;nodes[editingNodeId].h=nodes[editingNodeId].el.offsetHeight;redrawArrows();},0);
+    saveHistory();
+  }
+  editOverlay.style.display='none';
+  editingNodeId=null;
+}
+
+// ── DELETE ──
+function deleteSelected(){
+  const toDelete=[...selectedNodes];
+  toDelete.forEach(nid=>{
+    // remove arrows connected to this node
+    arrows.forEach((a,i)=>{if(a&&(a.fromNode===nid||a.toNode===nid)){removeArrow(i);}});
+    nodes[nid].el.remove();
+    delete nodes[nid];
+  });
+  if(selectedArrow!=null){removeArrow(selectedArrow);selectedArrow=null;}
+  selectedNodes.clear();
+  updateDeleteBtn();
+  saveHistory();
+}
+function removeArrow(id){
+  const a=arrows[id];if(!a)return;
+  a.el.remove();
+  if(a.labelG)a.labelG.remove();
+  arrows[id]=null;
+}
+
+// ── CLEAR ──
+function clearAll(){
+  if(!confirm('전체를 지울까요?'))return;
+  Object.keys(nodes).forEach(nid=>{nodes[nid].el.remove();});
+  nodes={};
+  arrows.forEach((a,i)=>{if(a){a.el.remove();if(a.labelG)a.labelG.remove();}});
+  arrows=[];
+  selectedNodes.clear();selectedArrow=null;
+  saveHistory();updateDeleteBtn();
+}
+
+// ── CANVAS CLICK (deselect) ──
+canvas.addEventListener('mousedown',e=>{
+  if(e.target===canvas||e.target===svg||e.target.tagName==='svg')deselectAll();
+});
+
+// ── PALETTE DRAG ──
+function palDragStart(e,type){palDragType=type;e.dataTransfer.effectAllowed='copy';}
+function canvasOver(e){e.preventDefault();}
+function canvasDrop(e){
+  e.preventDefault();
+  if(!palDragType)return;
+  const rect=canvas.getBoundingClientRect();
+  const sc=getScale();
+  const x=(e.clientX-rect.left)/sc-60;
+  const y=(e.clientY-rect.top)/sc-20;
+  addNode(palDragType,Math.max(0,x),Math.max(0,y));
+  palDragType=null;
+}
+
+// ── TOOLBAR ADD (center area) ──
+function addNode(type,x,y,label){
+  const wrap=document.getElementById('canvas-wrap');
+  if(x===undefined){x=wrap.scrollLeft+wrap.clientWidth/2-60;y=wrap.scrollTop+wrap.clientHeight/2-20;}
+  const id='n'+(++nodeCounter);
+  label=label||(type==='terminal'?'시작':type==='process'?'처리 내용':type==='decision'?'조건?':type==='io'?'입/출력':'●');
+  const el=document.createElement('div');
+  el.className='fc-node';
+  el.id='node-'+id;
+  el.style.left=x+'px';
+  el.style.top=y+'px';
+
+  const body=document.createElement('div');
+  body.className='node-body nb-'+type;
+  body.textContent=label;
+  el.appendChild(body);
+
+  const portList=type==='decision'?['t','bl','br','l']:['t','b','l','r'];
+  portList.forEach(p=>{
+    const pt=document.createElement('div');
+    pt.className='port port-'+p;pt.dataset.port=p;
+    pt.addEventListener('mousedown',e=>{if(tool==='connect'){e.stopPropagation();startConnect(id,p,e);}});
+    el.appendChild(pt);
+  });
+
+  const rh=document.createElement('div');rh.className='resize-handle';
+  rh.addEventListener('mousedown',e=>{e.stopPropagation();startResize(id,e);});
+  el.appendChild(rh);
+
+  el.addEventListener('mousedown',e=>{
+    if(e.target.classList.contains('port')||e.target.classList.contains('resize-handle'))return;
+    if(tool==='select'){e.stopPropagation();startDrag(id,e);}
+  });
+  el.addEventListener('dblclick',e=>{if(!e.target.classList.contains('port'))startEdit(id);});
+
+  canvas.appendChild(el);
+  nodes[id]={el,x,y,w:0,h:0,type,label};
+  setTimeout(()=>{nodes[id].w=el.offsetWidth;nodes[id].h=el.offsetHeight;},0);
+  selectNode(id,false);
+  saveHistory();updateDeleteBtn();
+  return id;
+}
+
+// ── HISTORY ──
+function snapshotState(){
+  const ns={};
+  Object.entries(nodes).forEach(([k,v])=>ns[k]={x:v.x,y:v.y,type:v.type,label:v.label,w:v.el.offsetWidth,h:v.el.offsetHeight});
+  const as=arrows.map(a=>a?{fromNode:a.fromNode,fromPort:a.fromPort,toNode:a.toNode,toPort:a.toPort,label:a.label}:null);
+  return JSON.stringify({ns,as,nc:nodeCounter,ac:arrowCounter});
+}
+function saveHistory(){
+  history=history.slice(0,historyIdx+1);
+  history.push(snapshotState());
+  historyIdx=history.length-1;
+  document.getElementById('tb-undo').disabled=historyIdx<=0;
+  document.getElementById('tb-redo').disabled=true;
+}
+function undo(){if(historyIdx<=0)return;historyIdx--;restoreState(history[historyIdx]);document.getElementById('tb-undo').disabled=historyIdx<=0;document.getElementById('tb-redo').disabled=false;}
+function redo(){if(historyIdx>=history.length-1)return;historyIdx++;restoreState(history[historyIdx]);document.getElementById('tb-undo').disabled=false;document.getElementById('tb-redo').disabled=historyIdx>=history.length-1;}
+
+function restoreState(snapshot){
+  const {ns,as,nc,ac}=JSON.parse(snapshot);
+  // clear current
+  Object.keys(nodes).forEach(k=>{nodes[k].el.remove();});nodes={};
+  arrows.forEach(a=>{if(a){a.el.remove();if(a.labelG)a.labelG.remove();}});arrows=[];
+  selectedNodes.clear();selectedArrow=null;
+
+  nodeCounter=nc;arrowCounter=ac;
+
+  // rebuild nodes
+  Object.entries(ns).forEach(([id,v])=>{
+    const el=document.createElement('div');
+    el.className='fc-node';el.id='node-'+id;
+    el.style.left=v.x+'px';el.style.top=v.y+'px';
+    if(v.w)el.style.width=v.w+'px';if(v.h)el.style.height=v.h+'px';
+
+    const body=document.createElement('div');
+    body.className='node-body nb-'+v.type;body.textContent=v.label;
+    el.appendChild(body);
+
+    const portList=v.type==='decision'?['t','bl','br','l']:['t','b','l','r'];
+    portList.forEach(p=>{
+      const pt=document.createElement('div');pt.className='port port-'+p;pt.dataset.port=p;
+      pt.addEventListener('mousedown',e=>{if(tool==='connect'){e.stopPropagation();startConnect(id,p,e);}});
+      el.appendChild(pt);
+    });
+    const rh=document.createElement('div');rh.className='resize-handle';
+    rh.addEventListener('mousedown',e=>{e.stopPropagation();startResize(id,e);});
+    el.appendChild(rh);
+    el.addEventListener('mousedown',e=>{if(e.target.classList.contains('port')||e.target.classList.contains('resize-handle'))return;if(tool==='select'){e.stopPropagation();startDrag(id,e);}});
+    el.addEventListener('dblclick',e=>{if(!e.target.classList.contains('port'))startEdit(id);});
+    canvas.appendChild(el);
+    nodes[id]={el,x:v.x,y:v.y,w:v.w,h:v.h,type:v.type,label:v.label};
+  });
+
+  // rebuild arrows
+  as.forEach((a,i)=>{
+    if(!a){arrows[i]=null;return;}
+    const pathEl=document.createElementNS('http://www.w3.org/2000/svg','path');
+    pathEl.classList.add('arrow-path');
+    pathEl.setAttribute('marker-end','url(#arrowhead)');
+    pathEl.dataset.arrowId=i;
+    pathEl.addEventListener('click',e=>{e.stopPropagation();selectArrowById(i);});
+    pathEl.addEventListener('dblclick',e=>{e.stopPropagation();editArrowLabel(i);});
+    const labelG=document.createElementNS('http://www.w3.org/2000/svg','g');
+    labelG.classList.add('arrow-label-g');
+    const labelRect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    labelRect.classList.add('arrow-label-rect');labelRect.setAttribute('rx','4');
+    const labelText=document.createElementNS('http://www.w3.org/2000/svg','text');
+    labelText.classList.add('arrow-label-text');labelText.setAttribute('text-anchor','middle');labelText.setAttribute('dominant-baseline','middle');
+    labelG.appendChild(labelRect);labelG.appendChild(labelText);
+    labelG.addEventListener('dblclick',e=>{e.stopPropagation();editArrowLabel(i);});
+    svg.appendChild(labelG);
+    svg.insertBefore(pathEl,svg.firstChild);
+    arrows[i]={id:i,fromNode:a.fromNode,fromPort:a.fromPort,toNode:a.toNode,toPort:a.toPort,label:a.label,el:pathEl,labelG,labelRect,labelText};
+    drawArrow(i);
+  });
+  updateDeleteBtn();
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown',e=>{
+  if(e.target===editInput)return;
+  if((e.key==='Delete'||e.key==='Backspace')&&(selectedNodes.size>0||selectedArrow!=null)){e.preventDefault();deleteSelected();}
+  if(e.ctrlKey&&e.key==='z'){e.preventDefault();undo();}
+  if(e.ctrlKey&&(e.key==='y'||e.key==='Y')){e.preventDefault();redo();}
+  if(e.key==='v'||e.key==='V')setTool('select');
+  if(e.key==='c'||e.key==='C')setTool('connect');
+  if(e.key==='Escape')deselectAll();
+});
+
+// ── SAVE IMAGE ──
+function saveImage(){
+  showToast('순서도 이미지 생성 중...');
+  html2canvas(canvas,{scale:1.5,useCORS:true,backgroundColor:'#FAFAFA',logging:false,width:1600,height:1200}).then(c=>{
+    const link=document.createElement('a');
+    link.download='순서도.png';link.href=c.toDataURL('image/png');link.click();
+    showToast('✅ 순서도 이미지 저장 완료!');
+  });
+}
+
+// ── EXAMPLE ──
+function loadExample(){
+  if(!confirm('응급차 이송 알고리즘 예제를 불러올까요? (현재 내용이 지워집니다)'))return;
+  clearAllSilent();
+  const n1=addNode('terminal',400,60,'시작');
+  const n2=addNode('io',370,170,'환자 위치 확인');
+  const n3=addNode('process',360,290,'현재 위치에서 최단 시간 경로 탐색');
+  const n4=addNode('decision',370,410,'병원에 도착했는가?');
+  const n5=addNode('process',210,410,'다음 경로로 이동');
+  const n6=addNode('io',370,540,'도착 완료 알림');
+  const n7=addNode('terminal',400,640,'종료');
+  setTimeout(()=>{
+    addArrow(n1,'b',n2,'t');
+    addArrow(n2,'b',n3,'t');
+    addArrow(n3,'b',n4,'t');
+    addArrow(n4,'bl',n5,'t','아니오');
+    addArrow(n5,'t',n3,'l');
+    addArrow(n4,'b',n6,'t','예');
+    addArrow(n6,'b',n7,'t');
+    saveHistory();
+  },100);
+}
+function clearAllSilent(){
+  Object.keys(nodes).forEach(k=>{nodes[k].el.remove();});nodes={};
+  arrows.forEach(a=>{if(a){a.el.remove();if(a.labelG)a.labelG.remove();}});arrows=[];
+  selectedNodes.clear();selectedArrow=null;nodeCounter=0;arrowCounter=0;
+}
+
+// init history
+saveHistory();
+</script>
+</body>
+</html>
